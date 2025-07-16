@@ -6,18 +6,22 @@ import Safe from "./home/_components/Safe";
 import FAQSection from "./home/_components/FAQSection";
 import ContentSection from "./home/_components/ContentSection";
 import Footer from "./home/_components/Footer";
+import JsonLd from "@/components/JsonLd";
 
 export default function Home() {
   return (
-    <div>
-      <LandingPage />
-      <CrossBoder />
-      <ImageModal />
-      <Business />
-      <Safe />
-      <FAQSection />
-      <ContentSection />
-      <Footer />
-    </div>
+    <>
+      <JsonLd />
+      <div>
+        <LandingPage />
+        <CrossBoder />
+        <ImageModal />
+        <Business />
+        <Safe />
+        <FAQSection />
+        <ContentSection />
+        <Footer />
+      </div>
+    </>
   );
 }
