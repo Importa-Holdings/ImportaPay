@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,9 +12,36 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "ImportaPay",
-  description: "Pay Your Vendors Abroad Using Only Naira",
+export const metadata = {
+  title: "ImportaPay – AI-Powered Retail Banking",
+  description:
+    "An AI-powered retail banking platform built for local collection and international settlement for African retailers.",
+  keywords: ["retail banking", "AI banking", "African retailers", "ImportaPay"],
+  openGraph: {
+    title: "ImportaPay – AI-Powered Retail Banking",
+    description:
+      "An AI-powered retail banking platform built for local collection and international settlement for African retailers.",
+    url: "https://pay.importa.biz",
+    siteName: "ImportaPay",
+    images: [
+      {
+        url: "https://pay.importa.biz/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "ImportaPay Preview",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ImportaPay – AI-Powered Retail Banking",
+    description:
+      "An AI-powered retail banking platform built for local collection and international settlement for African retailers.",
+    images: ["https://pay.importa.biz/og-image.jpg"],
+  },
+  metadataBase: new URL("https://pay.importa.biz"),
 };
 
 export default function RootLayout({
