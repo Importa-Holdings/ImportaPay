@@ -17,6 +17,10 @@ export const metadata = {
   description:
     "An AI-powered retail banking platform built for local collection and international settlement for African retailers.",
   keywords: [
+    "Importer",
+    "Import",
+    "Buy and Sell",
+    "Importation",
     "retail banking",
     "AI banking",
     "African retailers",
