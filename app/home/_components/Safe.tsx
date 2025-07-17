@@ -32,13 +32,10 @@ const Safe = () => {
     <div className="mt-40 relative flex items-center justify-center h-[400px] sm:h-[400px] md:h-[80vh] overflow-hidden">
       {/* Background image */}
       <div
-        className="
-          absolute inset-0
-          bg-[url('/image/fan.png')]
-          bg-cover
-          bg-[500px] 
-          md:bg-center
-        "
+        className="absolute inset-0 bg-cover bg-[500px] md:bg-center"
+        style={{
+          backgroundImage: "url('/image/fan.png')",
+        }}
       ></div>
 
       {/* Overlay */}

@@ -8,15 +8,18 @@ import Image from "next/image";
 const LandingPage = () => {
   return (
     <div
-      className={`
+      className="
         min-h-screen
-        bg-[url('https://res.cloudinary.com/detr9iyys/image/upload/v1752324671/landing-bg_yrmnq6.png')]
         bg-cover
         bg-[500px]       /* default: center on mobile */
         md:bg-center        /* from md screens up: shift to left (or pick your preference) */
         relative
         overflow-hidden
-      `}
+      "
+      style={{
+        backgroundImage:
+          "url('https://res.cloudinary.com/detr9iyys/image/upload/v1752324671/landing-bg_yrmnq6.png')",
+      }}
     >
       <Navbar />
       {/* Main Content */}
