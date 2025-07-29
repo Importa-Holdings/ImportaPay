@@ -55,8 +55,8 @@ const Safe = () => {
               Trusted & Secured By <br /> Our Licensed Banking <br /> Partner
             </h1>
             <p className="font-sans mt-4 text-white/90 text-[15px]">
-              <span className="font-semibold text-white">Importapay</span> is
-              powered by{" "}
+              <span className="font-semibold text-white">Importapay</span> is in
+              partnership with{" "}
               <span className="font-semibold text-white">
                 9 Payment Service Bank
               </span>
