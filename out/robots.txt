@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://pay.importa.biz
+
+# Sitemaps
+Sitemap: https://pay.importa.biz/sitemap.xml
