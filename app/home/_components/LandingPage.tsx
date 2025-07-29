@@ -25,7 +25,7 @@ const LandingPage = () => {
       {/* Main Content */}
       <main className="relative z-10 pt-22 md:pt-35 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl space-y-8">
+          <div className="max-w-4xl space-y-7">
             {/* Hero Section */}
             <h1 className="font-sans text-4xl sm:text-5xl md:text-7xl font-bold text-white leading-tight">
               Pay Your Vendors
@@ -38,11 +38,12 @@ const LandingPage = () => {
             <p className="font-sans text-xl md:text-2xl text-white/80 max-w-2xl leading-relaxed">
               You don&apos;t need to look for dollars. We&apos;ve made it easier
               for you to collect payments from your customers and pay your
-              suppliers abroad directly using naira
+              suppliers abroad directly using naira through our licensed
+              partners.
             </p>
 
             {/* Download Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 md:pt-8 pt-35">
+            <div className="flex flex-col sm:flex-row gap-4 md:pt-6 pt-35">
               <Button
                 size="lg"
                 className="bg-white text-black border-white/30 hover:bg-white/30 backdrop-blur-sm

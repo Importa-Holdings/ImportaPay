@@ -86,8 +86,8 @@ const Business = () => {
                   Send money fast. Save more
                 </h3>
                 <p className="text-gray-600">
-                  All your transfers get completed in seconds. And you keep more
-                  of your money, thanks to our low-cost transfers.
+                  Transfers are processed quickly through our trusted payment
+                  partners keeping your costs low and your business moving.
                 </p>
               </div>
             </div>
@@ -122,7 +122,7 @@ const Business = () => {
                 </h3>
                 <p className="text-white/80">
                   We help you pay your vendors abroad using naira, with some of
-                  the best FX rates around
+                  the best FX rates around, via our licensed partners.
                 </p>
               </div>
             </div>
