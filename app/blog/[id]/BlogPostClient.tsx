@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Share, Loader2, ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner";
+import { useAuthStore } from "@/lib/store/authStore";
 
 interface Post {
   id: number;
@@ -36,9 +37,22 @@ export default function BlogPostClient({
   error: initialError,
 }: BlogPostClientProps) {
   const [post, setPost] = useState<Post | null>(initialData || null);
+  const { user, token } = useAuthStore();
+  const [isAuthor, setIsAuthor] = useState(false);
   const [loading, setLoading] = useState(!initialData && !initialError);
   const [error, setError] = useState<string | null>(initialError || null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    // Check if the current user is the author of the post
+    if (user && post) {
+      // Convert both to string for safe comparison
+      setIsAuthor(String(user.id) === String(post.author_id));
+    } else {
+      setIsAuthor(false);
+    }
+  }, [user, post]);
 
   useEffect(() => {
     // If we have initial data, no need to fetch
@@ -92,8 +106,9 @@ export default function BlogPostClient({
           text: post?.subtitle,
           url: window.location.href,
         });
-      } catch (err) {
+      } catch {
         // Error handling for share functionality
+        toast.error("Failed to share the post");
       }
     } else {
       // Fallback: copy to clipboard
@@ -124,8 +139,6 @@ export default function BlogPostClient({
       </div>
     );
   }
-
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleUpdate = async () => {
     try {
@@ -226,21 +239,25 @@ export default function BlogPostClient({
             </span>
           </div>
           <div className="flex space-x-2">
-            <button
-              onClick={handleUpdate}
-              className="border border-blue-300 px-4 py-1.5 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-blue-50 transition-colors"
-            >
-              <span className="text-sm">Edit</span>
-              <Pencil className="w-4 h-4" />
-            </button>
-            <button
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="border border-red-300 px-4 py-1.5 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span className="text-sm">Delete</span>
-              <Trash2 className="w-4 h-4" />
-            </button>
+            {isAuthor && token && (
+              <>
+                <button
+                  onClick={handleUpdate}
+                  className="border border-blue-300 px-4 py-1.5 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-blue-50 transition-colors"
+                >
+                  <span className="text-sm">Edit</span>
+                  <Pencil className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="border border-red-300 px-4 py-1.5 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="text-sm">Delete</span>
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </>
+            )}
             <button
               onClick={handleShare}
               className="border border-gray-300 px-4 py-1.5 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-gray-50 transition-colors"

@@ -42,11 +42,16 @@ export function useRegister() {
       }
 
       throw new Error("Registration failed");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Registration error:", error);
-      const errorMessage =
-        error.response?.data?.message ||
-        "An error occurred during registration";
+      let errorMessage = "An error occurred during registration";
+      
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || error.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
       toast.error(errorMessage);
       return { success: false, error: errorMessage };
     } finally {

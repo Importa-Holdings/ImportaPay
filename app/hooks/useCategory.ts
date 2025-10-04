@@ -174,6 +174,7 @@ export const useCategory = () => {
         {
           headers,
           withCredentials: true,
+          validateStatus: (status) => status < 500, // Don't throw for 4xx errors
         }
       );
 

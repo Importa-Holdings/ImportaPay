@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import { useAuthStore } from '@/lib/store/authStore';
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useAuthStore } from "@/lib/store/authStore";
 
 export function useUser() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { user, setUser, token } = useAuthStore();
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     if (!token) {
       setIsLoading(false);
       return null;
@@ -17,32 +17,37 @@ export function useUser() {
 
     try {
       setIsLoading(true);
-      const response = await fetch('https://admin-api.pay.importa.biz/api/auth/user', {
-        method: 'GET',
-        headers: {
-          'Accept': '*/*',
-          'X-CSRF-TOKEN': '',
-          'Authorization': `Bearer ${token}`,
-        },
-        credentials: 'include',
-      });
+      const response = await fetch(
+        "https://admin-api.pay.importa.biz/api/auth/user",
+        {
+          method: "GET",
+          headers: {
+            Accept: "*/*",
+            "X-CSRF-TOKEN": "",
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch user data');
+        throw new Error("Failed to fetch user data");
       }
 
       const userData = await response.json();
       setUser(userData);
       return userData;
     } catch (err) {
-      console.error('Error fetching user:', err);
-      setError(err instanceof Error ? err : new Error('An unknown error occurred'));
-      toast.error('Failed to load user data');
+      console.error("Error fetching user:", err);
+      setError(
+        err instanceof Error ? err : new Error("An unknown error occurred")
+      );
+      toast.error("Failed to load user data");
       return null;
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [token, setUser]);
 
   // Fetch user data on mount if we have a token but no user data
   useEffect(() => {
@@ -51,7 +56,7 @@ export function useUser() {
     } else {
       setIsLoading(false);
     }
-  }, [token, user]);
+  }, [token, user, fetchUser]);
 
   const refetch = async () => {
     return await fetchUser();

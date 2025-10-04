@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export interface CategoryModalProps {
   /**
@@ -28,17 +28,12 @@ export interface CategoryModalProps {
    * The trigger element that will open the modal
    */
   children: React.ReactNode;
-  /**
-   * Additional class names for the trigger button
-   */
-  className?: string;
 }
 
 export function CategoryModal({
   onCreateCategory,
   isCreating,
   children,
-  className,
 }: CategoryModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [categoryName, setCategoryName] = useState("");
@@ -54,21 +49,21 @@ export function CategoryModal({
       setIsOpen(false);
     }
     setWasCreating(isCreating);
-  }, [isCreating]);
+  }, [isCreating, wasCreating]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!categoryName.trim() || isCreating) return;
-    
+
     setError(null);
     await onCreateCategory(categoryName.trim());
-    
+
     // Note: The modal will be closed by the useEffect when isCreating becomes false
   };
 
   return (
-    <Dialog 
-      open={isOpen} 
+    <Dialog
+      open={isOpen}
       onOpenChange={(open) => {
         if (!open) {
           setCategoryName("");
@@ -77,9 +72,7 @@ export function CategoryModal({
         setIsOpen(open);
       }}
     >
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Category</DialogTitle>
@@ -100,9 +93,7 @@ export function CategoryModal({
               disabled={isCreating}
               required
             />
-            {error && (
-              <p className="text-sm text-red-500">{error}</p>
-            )}
+            {error && <p className="text-sm text-red-500">{error}</p>}
           </div>
           <div className="flex justify-end space-x-2 pt-4">
             <Button
@@ -113,8 +104,8 @@ export function CategoryModal({
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isCreating || !categoryName.trim()}
               className="min-w-[120px]"
             >

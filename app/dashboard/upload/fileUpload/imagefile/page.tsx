@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useCategory } from "@/hooks/useCategory";
 import { CategorySelect } from "@/components/category/category-select";
 import { useAuthStore } from "@/lib/store/authStore";
+import Image from "next/image";
 
 export interface Category {
   id: string;
@@ -26,17 +27,12 @@ interface PostData {
   author_id?: number | string;
 }
 
-export default function PublishPostPage() {
+function PublishPostContent() {
   const { token, user } = useAuthStore();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [post, setPost] = useState<PostData | null>(null);
-  const [category, setCategory] = useState("");
-  const {
-    fetchCategories,
-    createCategory,
-    isLoading: isLoadingCategories,
-  } = useCategory();
-  const [categories, setCategories] = useState<Category[]>([]);
+  const { createCategory } = useCategory();
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [subtitle, setSubtitle] = useState("");
   const [dragActive, setDragActive] = useState(false);
@@ -64,60 +60,55 @@ export default function PublishPostPage() {
     }
   };
 
-  const searchParams = useSearchParams();
+  const loadData = useCallback(async () => {
+    try {
+      // Check if we're in edit mode
+      const editData = searchParams.get("edit");
+      if (editData) {
+        try {
+          const parsedData = JSON.parse(decodeURIComponent(editData));
+          setPost({
+            ...parsedData,
+            isDraft: false,
+          });
+          setSubtitle(parsedData.subtitle || "");
+          setSelectedCategory(parsedData.category_id || "");
+
+          if (parsedData.image) {
+            setImagePreview(
+              parsedData.image.startsWith("http")
+                ? parsedData.image
+                : `https://admin-api.pay.importa.biz/storage/${parsedData.image}`
+            );
+          }
+
+          setIsEditing(true);
+        } catch (e) {
+          console.error("Error parsing edit data:", e);
+          toast.error("Error loading post data");
+          router.push("/dashboard/upload/fileUpload");
+          return;
+        }
+      } else {
+        const savedPost = localStorage.getItem("draftPost");
+        if (savedPost) {
+          setPost(JSON.parse(savedPost));
+        } else {
+          toast.error("No post data found");
+          router.push("/dashboard/upload/fileUpload");
+          return;
+        }
+      }
+    } catch (error) {
+      console.error("Error loading data:", error);
+      toast.error("Failed to load required data");
+      router.push("/dashboard/upload/fileUpload");
+    }
+  }, [router, searchParams]);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Check if we're in edit mode
-        const editData = searchParams.get("edit");
-        if (editData) {
-          try {
-            const parsedData = JSON.parse(decodeURIComponent(editData));
-            setPost({
-              ...parsedData,
-              isDraft: false,
-            });
-            setSubtitle(parsedData.subtitle || "");
-            setSelectedCategory(parsedData.category_id || "");
-
-            if (parsedData.image) {
-              setImagePreview(
-                parsedData.image.startsWith("http")
-                  ? parsedData.image
-                  : `https://admin-api.pay.importa.biz/storage/${parsedData.image}`
-              );
-            }
-
-            setIsEditing(true);
-          } catch (e) {
-            console.error("Error parsing edit data:", e);
-            toast.error("Error loading post data");
-            router.push("/dashboard/upload/fileUpload");
-            return;
-          }
-        } else {
-          const savedPost = localStorage.getItem("draftPost");
-          if (savedPost) {
-            setPost(JSON.parse(savedPost));
-          } else {
-            toast.error("No post data found");
-            router.push("/dashboard/upload/fileUpload");
-            return;
-          }
-        }
-
-        const categories = await fetchCategories();
-        setCategories(categories as Category[]);
-      } catch (error) {
-        console.error("Error loading data:", error);
-        toast.error("Failed to load required data");
-        router.push("/dashboard/upload/fileUpload");
-      }
-    };
-
     loadData();
-  }, [router, searchParams]);
+  }, [loadData]);
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -156,23 +147,18 @@ export default function PublishPostPage() {
   ): Promise<boolean> => {
     try {
       setIsCreatingCategory(true);
-      const newCategory = await createCategory(name);
-      if (newCategory) {
-        setCategories((prev) => [...prev, newCategory as Category]);
-        setSelectedCategory(newCategory.id.toString());
-        setCategory(newCategory.id.toString());
-        toast.success(`Category "${name}" created successfully`);
-
-        if (onSuccess) {
-          onSuccess();
-        }
-
-        return true;
+      const result = await createCategory(name);
+      const success = !!result;
+      if (success) {
+        toast.success("Category created successfully");
+        if (onSuccess) onSuccess();
+      } else {
+        toast.error("Failed to create category");
       }
-      return false;
+      return success;
     } catch (error) {
       console.error("Error creating category:", error);
-      toast.error("Failed to create category. Please try again.");
+      toast.error("Error creating category");
       return false;
     } finally {
       setIsCreatingCategory(false);
@@ -213,19 +199,16 @@ export default function PublishPostPage() {
 
       const formData = new FormData();
 
-      // Only append the image if it exists
       if (imageFile) {
         formData.append("image", imageFile);
       }
 
-      // Add other form data
       formData.append("title", post.title);
       formData.append("subtitle", subtitle || "");
       formData.append("content", post.content);
       formData.append("category_id", selectedCategory);
       formData.append("is_published", "1");
 
-      // Add author_id
       if (user?.id) {
         formData.append("author_id", user.id.toString());
       } else if (post.author_id) {
@@ -252,23 +235,16 @@ export default function PublishPostPage() {
         );
       }
 
-      // Clear the draft from localStorage
       localStorage.removeItem("draftPost");
 
-      // Show success message
       toast.success(
         isEditing
           ? "Post updated successfully!"
           : "Post published successfully!"
       );
 
-      // Redirect to blog page
-      router.push("/blog");
+      router.push("/dashboard");
     } catch (error) {
-      console.error(
-        `Error ${isEditing ? "updating" : "publishing"} post:`,
-        error
-      );
       const errorMessage =
         error instanceof Error
           ? error.message
@@ -281,7 +257,6 @@ export default function PublishPostPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
       <div className="flex items-center justify-between p-6 border-b border-gray-100">
         <button
           onClick={() => router.back()}
@@ -296,12 +271,10 @@ export default function PublishPostPage() {
         <div className="w-8"></div>
       </div>
 
-      {/* Content */}
       <div className="max-w-6xl mx-auto p-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-8">Publish post</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column - Cover Photo */}
           <div>
             <h2 className="text-base font-semibold text-gray-900 mb-4">
               Cover photo
@@ -320,11 +293,15 @@ export default function PublishPostPage() {
               <div className="space-y-4">
                 {imagePreview ? (
                   <div className="mb-4">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="max-w-full h-auto rounded-lg"
-                    />
+                    <div className="relative w-full h-48">
+                      <Image
+                        src={imagePreview}
+                        alt="Preview"
+                        fill
+                        className="object-cover rounded-lg"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
                     <button
                       type="button"
                       onClick={() => {
@@ -363,18 +340,15 @@ export default function PublishPostPage() {
             </div>
           </div>
 
-          {/* Right Column - Category and Subtitle */}
           <div className="space-y-8">
-            {/* Category */}
             <div>
               <label className="block text-base font-semibold text-gray-900 mb-4">
                 Category
               </label>
               <CategorySelect
                 selectedCategoryId={selectedCategory}
-                onCategoryChange={(categoryId) => {
+                onCategoryChange={(categoryId: string | number) => {
                   setSelectedCategory(categoryId.toString());
-                  setCategory(categoryId.toString());
                 }}
                 className="w-full"
                 onCreateCategory={handleCreateCategory}
@@ -382,7 +356,6 @@ export default function PublishPostPage() {
               />
             </div>
 
-            {/* Preview Subtitle */}
             <div>
               <label className="block text-base font-semibold text-gray-900 mb-4">
                 Preview subtitle
@@ -398,7 +371,6 @@ export default function PublishPostPage() {
           </div>
         </div>
 
-        {/* Publish Button */}
         <div className="mt-12 flex justify-between items-center">
           <button
             type="button"
@@ -428,5 +400,24 @@ export default function PublishPostPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function PublishPostFallback() {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading publish page...</p>
+      </div>
+    </div>
+  );
+}
+
+export default function PublishPostPage() {
+  return (
+    <Suspense fallback={<PublishPostFallback />}>
+      <PublishPostContent />
+    </Suspense>
   );
 }

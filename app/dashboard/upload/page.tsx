@@ -48,7 +48,7 @@ export default function UploadEmpty() {
         </svg>
         <div className="font-bold text-xl mb-2 text-center">No posts yet</div>
         <div className="text-gray-500 text-sm mb-6 text-center max-w-xs">
-          You don't have any posts yet. Start a new post when ready
+          You don&apos;t have any posts yet. Start a new post when ready
         </div>
         <Link href="/dashboard/upload/fileUpload">
           <button className="bg-purple-700 text-white px-10 py-3 rounded-xl font-medium shadow hover:bg-purple-800 transition flex items-center justify-center mb-12">

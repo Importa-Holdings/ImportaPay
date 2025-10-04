@@ -55,10 +55,16 @@ export function useLogin() {
       }
 
       throw new Error("Login failed");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Login error:", error);
-      const errorMessage =
-        error.response?.data?.message || "Invalid email or password";
+      let errorMessage = "Invalid email or password";
+      
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || error.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
       toast.error(errorMessage);
       return { success: false, error: errorMessage };
     } finally {

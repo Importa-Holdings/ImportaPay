@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowLeft,
@@ -33,10 +33,9 @@ const createBlogPost = (initial?: Partial<BlogPost>): BlogPost => ({
   ...initial,
 });
 
-export default function BlogEditor() {
+function BlogEditorContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isEditing, setIsEditing] = useState(false);
   const { token, user } = useAuthStore();
   const [post, setPost] = useState<BlogPost>(() => {
     // Check if we're in edit mode
@@ -61,25 +60,6 @@ export default function BlogEditor() {
     return createBlogPost();
   });
   const [isSaving, setIsSaving] = useState(false);
-
-  // Memoize callbacks to prevent unnecessary re-renders
-  const updatePost = useCallback((updates: Partial<BlogPost>) => {
-    setPost((prev) => ({ ...prev, ...updates }));
-  }, []);
-
-  const updateContent = useCallback(
-    (content: string) => {
-      updatePost({ content });
-    },
-    [updatePost]
-  );
-
-  const updateTitle = useCallback(
-    (title: string) => {
-      updatePost({ title });
-    },
-    [updatePost]
-  );
 
   const handleNext = useCallback(() => {
     if (!post.title.trim() || !post.content.trim()) {
@@ -290,5 +270,26 @@ export default function BlogEditor() {
         </div>
       </main>
     </div>
+  );
+}
+
+// Loading fallback component
+function BlogEditorFallback() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading editor...</p>
+      </div>
+    </div>
+  );
+}
+
+// Main export wrapped in Suspense
+export default function BlogEditor() {
+  return (
+    <Suspense fallback={<BlogEditorFallback />}>
+      <BlogEditorContent />
+    </Suspense>
   );
 }

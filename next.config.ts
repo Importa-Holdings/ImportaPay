@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Server Actions are enabled by default in Next.js 15+
   experimental: {
-    serverActions: true,
+    // No need to explicitly enable serverActions as it's enabled by default
   },
   images: {
     domains: [

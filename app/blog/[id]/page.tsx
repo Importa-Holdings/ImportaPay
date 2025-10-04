@@ -23,21 +23,21 @@ async function getPost(postId: string) {
 }
 
 interface PageProps {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
+  // Await the params in Next.js 15
+  const { id } = await params;
+
   // Get the post data before any client component rendering
-  const id = params.id;
-  const { data: initialData, error } = await getPost(id); // Return the component with pre-fetched data
+  const { data: initialData, error } = await getPost(id);
+
+  // Return the component with pre-fetched data
   return (
     <div className="min-h-screen">
-      <BlogPostClient
-        postId={id}
-        initialData={initialData}
-        error={error}
-      />
+      <BlogPostClient postId={id} initialData={initialData} error={error} />
     </div>
   );
 }

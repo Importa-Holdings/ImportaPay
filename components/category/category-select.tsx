@@ -1,8 +1,6 @@
 import { useCategory } from "@/hooks/useCategory";
 import { CategoryModal } from "@/app/components/category/category-modal";
 import { Plus } from "lucide-react";
-import { useState, useEffect } from "react";
-import { toast } from "sonner";
 
 interface CategorySelectProps {
   selectedCategoryId?: string | number;

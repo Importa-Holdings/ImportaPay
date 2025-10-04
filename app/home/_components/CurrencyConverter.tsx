@@ -2,10 +2,20 @@ import { useState, useEffect } from "react";
 import { ArrowDownUp } from "lucide-react";
 
 // Custom hook to fetch exchange rates
+interface ExchangeRates {
+  rate_naira?: number;
+  rate_dollar?: number;
+  rate_euro?: number;
+  rate_pound?: number;
+  rate_egp?: number;
+  rate_ksh?: number;
+  [key: string]: number | undefined;
+}
+
 const useExchangeRates = () => {
-  const [rates, setRates] = useState(null);
+  const [rates, setRates] = useState<ExchangeRates | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRates = async () => {
@@ -21,8 +31,16 @@ const useExchangeRates = () => {
         } else {
           setError(data.message);
         }
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        let errorMessage = 'Failed to fetch exchange rates';
+        
+        if (err instanceof Error) {
+          errorMessage = err.message;
+        } else if (typeof err === 'string') {
+          errorMessage = err;
+        }
+        
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -66,15 +84,11 @@ const CurrencyConverter = () => {
   ): string => {
     if (!rates || !amount) return "0";
 
-    const fromRate = parseFloat(
-      rates[
-        currencies.find((c) => c.code === fromCurrency)?.rateKey as string
-      ] || 1
-    );
-    const toRate = parseFloat(
-      rates[currencies.find((c) => c.code === toCurrency)?.rateKey as string] ||
-        1
-    );
+    const fromRateKey = currencies.find((c) => c.code === fromCurrency)?.rateKey || '';
+    const toRateKey = currencies.find((c) => c.code === toCurrency)?.rateKey || '';
+    
+    const fromRate = fromRateKey && rates[fromRateKey] ? Number(rates[fromRateKey]) : 1;
+    const toRate = toRateKey && rates[toRateKey] ? Number(rates[toRateKey]) : 1;
 
     const usdAmount = parseFloat(amount) * fromRate;
     const result = usdAmount / toRate;
@@ -99,10 +113,17 @@ const CurrencyConverter = () => {
   };
 
   const handleSwapCurrencies = () => {
-    setTopCurrency(bottomCurrency);
-    setBottomCurrency(topCurrency);
-    setTopAmount(bottomAmount);
-    setBottomAmount(topAmount);
+    // Store current values before swapping
+    const currentTopCurrency = bottomCurrency;
+    const currentBottomCurrency = topCurrency;
+    const currentTopAmount = bottomAmount;
+    const currentBottomAmount = topAmount;
+    
+    // Update states with stored values
+    setTopCurrency(currentTopCurrency);
+    setBottomCurrency(currentBottomCurrency);
+    setTopAmount(currentTopAmount);
+    setBottomAmount(currentBottomAmount);
   };
 
   const getFlag = (code: string) => {

@@ -30,7 +30,20 @@ export function usePosts() {
   
   const { user, token } = useAuthStore();
 
-  const formatPost = useCallback((post: any) => {
+  interface ApiPost {
+    id: number | string;
+    title: string;
+    subtitle?: string;
+    content: string;
+    image?: string;
+    created_at?: string;
+    is_published: number | boolean;
+    categories?: {
+      name: string;
+    };
+  }
+
+  const formatPost = useCallback((post: ApiPost) => {
     const postDate = post.created_at ? new Date(post.created_at) : new Date();
     
     return {
@@ -118,7 +131,7 @@ export function usePosts() {
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, formatPost]);
 
   useEffect(() => {
     const loadPosts = async () => {

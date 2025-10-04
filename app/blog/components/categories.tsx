@@ -3,7 +3,23 @@
 import React, { useState, useMemo } from "react";
 import { Search, Loader2 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePosts } from "../hooks/usePosts";
+
+interface Author {
+  color: string;
+  initial: string;
+}
+
+interface Article {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  date: string;
+  imageUrl?: string;
+  authors?: Author[];
+}
 
 export default function Categories() {
   const [activeTab, setActiveTab] = useState("All");
@@ -38,16 +54,18 @@ export default function Categories() {
     return filtered;
   }, [posts, activeTab, searchTerm, loading, error]);
 
-  const ArticleCard = ({ article }: { article: any }) => (
+  const ArticleCard = ({ article }: { article: Article }) => (
     <Link href={`/blog/${article.id}`}>
       <div className="bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer h-full">
         {/* Image */}
         {article.imageUrl ? (
-          <div className="w-full h-48 bg-gray-300 overflow-hidden">
-            <img 
+          <div className="w-full h-48 bg-gray-300 overflow-hidden relative">
+            <Image
               src={article.imageUrl.startsWith('http') ? article.imageUrl : `https://admin-api.pay.importa.biz/storage/${article.imageUrl.replace(/^\//, '')}`}
               alt={article.title}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               onError={(e) => {
                 // Fallback in case of image loading error
                 const target = e.target as HTMLImageElement;
@@ -83,7 +101,7 @@ export default function Categories() {
           {article.authors && article.authors.length > 0 && (
             <div className="flex items-center">
               <div className="flex -space-x-2">
-                {article.authors.map((author: any, index: number) => (
+                {article.authors?.map((author: Author, index: number) => (
                   <div
                     key={index}
                     className={`w-8 h-8 ${author.color} rounded-full flex items-center justify-center text-white text-sm font-medium border-2 border-white`}
