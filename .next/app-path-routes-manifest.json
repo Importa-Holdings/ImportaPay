@@ -1,0 +1,13 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/favicon.ico/route": "/favicon.ico",
+  "/blog/page": "/blog",
+  "/blog/[id]/page": "/blog/[id]",
+  "/dashboard/page": "/dashboard",
+  "/dashboard/upload/fileUpload/page": "/dashboard/upload/fileUpload",
+  "/dashboard/upload/page": "/dashboard/upload",
+  "/dashboard/upload/fileUpload/imagefile/page": "/dashboard/upload/fileUpload/imagefile",
+  "/page": "/",
+  "/login/page": "/login",
+  "/register/page": "/register"
+}
