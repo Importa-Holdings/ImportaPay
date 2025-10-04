@@ -19,7 +19,10 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@/components/*": ["./components/*"],
+      "@/hooks/*": ["./app/hooks/*"],
+      "@/lib/*": ["./lib/*"]
     },
     "forceConsistentCasingInFileNames": true
   },

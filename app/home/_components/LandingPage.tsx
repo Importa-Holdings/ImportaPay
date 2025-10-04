@@ -2,8 +2,8 @@
 
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Navbar } from "@/components/navbar/Navbar";
 import Image from "next/image";
+import { Navbar } from "@/components/navbar/Navbar";
 
 const LandingPage = () => {
   return (

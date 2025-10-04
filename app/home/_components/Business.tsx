@@ -1,6 +1,8 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
+import CurrencyConverter from "./CurrencyConverter";
 
 const Business = () => {
   return (
@@ -108,13 +110,7 @@ const Business = () => {
           <CardContent className="p-0">
             <div className="flex flex-col gap-3.5">
               <div className="relative mt-12 flex justify-center items-center">
-                <Image
-                  src="/image/exchange.png"
-                  alt="Illustration of amount"
-                  width={350}
-                  height={350}
-                  className="w-[350px] h-auto"
-                />
+                <CurrencyConverter />
               </div>
               <div className="mt-[70px]">
                 <h3 className="text-2xl font-bold mb-4">

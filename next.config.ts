@@ -1,14 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
-  trailingSlash: true,
+  experimental: {
+    serverActions: true,
+  },
   images: {
-    unoptimized: true,
     domains: [
-      // existing domains…
       "unsplash.com",
       "images.unsplash.com",
+      "admin-api.pay.importa.biz",
     ],
     // OR, for more granular control, you can use remotePatterns:
     // remotePatterns: [
