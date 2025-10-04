@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  --font-sfpro: "SF Pro Display", system-ui, sans-serif;
+}
