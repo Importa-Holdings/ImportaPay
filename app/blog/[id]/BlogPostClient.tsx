@@ -6,7 +6,18 @@ import { useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner";
 import { useAuthStore } from "@/lib/store/authStore";
 import DOMPurify from "dompurify";
-import parse, { domToReact } from "html-react-parser";
+import parse, {
+  domToReact,
+  DOMNode,
+  HTMLReactParserOptions,
+} from "html-react-parser";
+
+type DOMElement = {
+  type: "tag";
+  name: string;
+  children: DOMNode[];
+  attribs: Record<string, string>;
+};
 
 interface Post {
   id: number;
@@ -219,40 +230,58 @@ export default function BlogPostClient({
   };
 
   /* -------------------- helper to sanitize + normalize -------------------- */
-  function renderRichContent(html: string) {
+  function renderRichContent(html: string): React.ReactNode {
     // sanitize incoming HTML
     const clean = DOMPurify.sanitize(html || "", {
       ADD_ATTR: ["target", "rel", "class"], // allow these if editor used them
     });
 
-    // parse & transform nodes to inject safe Tailwind classes + normalize structure
-    return parse(clean, {
-      replace: (node: any) => {
-        if (node.type !== "tag") return;
+    const options: HTMLReactParserOptions = {
+      replace: (node) => {
+        if (!node || typeof node !== "object" || !("type" in node)) {
+          return undefined;
+        }
 
-        const name = node.name;
-        const children = node.children || [];
-        const attribs = node.attribs || {};
+        if (node.type === "text") {
+          return node.data;
+        }
+
+        if (node.type !== "tag") {
+          return undefined;
+        }
+
+        const element = node as DOMElement;
+        const { name, children = [], attribs = {} } = element;
+
+        // Helper to render children safely
+        const renderChildren = () => {
+          return domToReact(children as DOMNode[], options);
+        };
+
+        // Helper to get image source with fallback
+        const getImageSource = (): string => {
+          return attribs.src || attribs["data-src"] || "";
+        };
 
         // Headings — larger, serif, spaced like Medium
         if (name === "h1") {
           return (
             <h1 className="text-4xl md:text-5xl font-serif font-bold leading-tight mt-8 mb-4 text-gray-900">
-              {domToReact(children)}
+              {renderChildren()}
             </h1>
           );
         }
         if (name === "h2") {
           return (
             <h2 className="text-2xl md:text-3xl font-serif font-semibold leading-snug mt-6 mb-3 text-gray-900">
-              {domToReact(children)}
+              {renderChildren()}
             </h2>
           );
         }
         if (name === "h3") {
           return (
             <h3 className="text-xl font-semibold mt-6 mb-2 text-gray-900">
-              {domToReact(children)}
+              {renderChildren()}
             </h3>
           );
         }
@@ -261,7 +290,7 @@ export default function BlogPostClient({
         if (name === "p") {
           return (
             <p className="text-lg leading-[1.65] text-gray-700 mt-4 mb-4">
-              {domToReact(children)}
+              {renderChildren()}
             </p>
           );
         }
@@ -270,14 +299,14 @@ export default function BlogPostClient({
         if (name === "ul") {
           return (
             <ul className="list-disc ml-6 space-y-2 mt-4">
-              {domToReact(children)}
+              {renderChildren()}
             </ul>
           );
         }
         if (name === "ol") {
           return (
             <ol className="list-decimal ml-6 space-y-2 mt-4">
-              {domToReact(children)}
+              {renderChildren()}
             </ol>
           );
         }
@@ -285,17 +314,36 @@ export default function BlogPostClient({
           // unwrap paragraph inside li if present
           if (
             children.length === 1 &&
+            "type" in children[0] &&
             children[0].type === "tag" &&
-            children[0].name === "p"
+            "name" in children[0] &&
+            children[0].name === "p" &&
+            "children" in children[0]
           ) {
-            return <li className="ml-0">{domToReact(children[0].children)}</li>;
+            return (
+              <li
+                key={
+                  node.attribs.key || Math.random().toString(36).substr(2, 9)
+                }
+                className="ml-0"
+              >
+                {domToReact(children[0].children as DOMNode[], options)}
+              </li>
+            );
           }
-          return <li className="ml-0">{domToReact(children)}</li>;
+          return (
+            <li
+              key={node.attribs.key || Math.random().toString(36).substr(2, 9)}
+              className="ml-0"
+            >
+              {domToReact(children as DOMNode[], options)}
+            </li>
+          );
         }
 
         // Images — drop broken/no-src images and ensure responsive + rounded
         if (name === "img") {
-          const src = attribs.src || attribs["data-src"] || "";
+          const src = getImageSource();
           if (!src) return null; // remove empty img tags that break layout
           return (
             <img
@@ -314,7 +362,7 @@ export default function BlogPostClient({
         ) {
           return (
             <mark className="bg-yellow-200 px-1 rounded">
-              {domToReact(children)}
+              {renderChildren()}
             </mark>
           );
         }
@@ -335,7 +383,7 @@ export default function BlogPostClient({
               }
               className="underline text-purple-600 hover:text-purple-800"
             >
-              {domToReact(children)}
+              {renderChildren()}
             </a>
           );
         }
@@ -344,7 +392,7 @@ export default function BlogPostClient({
         if (name === "blockquote") {
           return (
             <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-700 my-6">
-              {domToReact(children)}
+              {renderChildren()}
             </blockquote>
           );
         }
@@ -353,7 +401,7 @@ export default function BlogPostClient({
         if (name === "code") {
           return (
             <code className="bg-gray-100 px-1 py-[2px] rounded text-sm font-mono">
-              {domToReact(children)}
+              {renderChildren()}
             </code>
           );
         }
@@ -362,7 +410,7 @@ export default function BlogPostClient({
         if (name === "pre") {
           return (
             <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto my-6">
-              {domToReact(children)}
+              {renderChildren()}
             </pre>
           );
         }
@@ -370,7 +418,9 @@ export default function BlogPostClient({
         // fallback: return nothing to let parser render default nodes
         return undefined;
       },
-    });
+    };
+    // IMPORTANT: return the parsed React nodes
+    return parse(clean, options);
   }
   /* -------------------- end helper -------------------- */
 

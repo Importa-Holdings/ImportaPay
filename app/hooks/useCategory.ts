@@ -24,6 +24,70 @@ export const useCategory = () => {
   const { token } = useAuthStore();
   const [hasLoaded, setHasLoaded] = useState(false);
 
+  const getAuthHeaders = useCallback(() => {
+    if (!token) {
+      console.error("No authentication token available");
+      // Instead of throwing, we'll return headers without the Authorization
+      // The API will return 401 if the token is required
+      return {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-TOKEN": "",
+      };
+    }
+    return {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+      "X-CSRF-TOKEN": "",
+    };
+  }, [token]);
+
+  const fetchCategories = useCallback(async (): Promise<Category[]> => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const headers = getAuthHeaders();
+
+      const response = await axios.get<{ data: Category[] }>(
+        `${API_BASE_URL}/categories`,
+        {
+          headers,
+          withCredentials: true,
+          validateStatus: (status) => status < 500, // Don't throw for 4xx errors
+        }
+      );
+
+      if (response.status === 401) {
+        const error = new Error("Session expired. Please log in again.");
+        throw error;
+      }
+
+      if (response.status >= 400) {
+        const error = new Error(
+          `Failed to fetch categories: ${response.status} ${response.statusText}`
+        );
+        // console.error("API error:", error);
+        throw error;
+      }
+
+      // The API returns the categories array directly, not wrapped in a data property
+      const categories = Array.isArray(response.data) ? response.data : [];
+      return categories;
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
+      const errorMessage =
+        error.response?.data?.message || "Failed to fetch categories";
+      // console.error("Error fetching categories:", error);
+      setError(errorMessage);
+      toast.error(errorMessage);
+      return [];
+    } finally {
+      setIsLoading(false);
+    }
+  }, [getAuthHeaders]); // Now we can depend on getAuthHeaders directly since it's memoized
+
   const loadCategories = useCallback(async () => {
     // Don't try to load if we don't have a token
     if (!token) {
@@ -44,7 +108,7 @@ export const useCategory = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [token]);
+  }, [fetchCategories, token]); // Reordered dependencies for consistency
 
   useEffect(() => {
     let isMounted = true;
@@ -78,24 +142,6 @@ export const useCategory = () => {
     };
   }, [token, hasLoaded, loadCategories]);
 
-  const getAuthHeaders = () => {
-    if (!token) {
-      console.error("No authentication token available");
-      // Instead of throwing, we'll return headers without the Authorization
-      // The API will return 401 if the token is required
-      return {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        "X-CSRF-TOKEN": "",
-      };
-    }
-    return {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: `Bearer ${token}`,
-      "X-CSRF-TOKEN": "",
-    };
-  };
 
   const createCategory = async (name: string): Promise<Category | null> => {
     setIsLoading(true);
@@ -157,51 +203,6 @@ export const useCategory = () => {
       }
 
       return null;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchCategories = async (): Promise<Category[]> => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const headers = getAuthHeaders();
-
-      const response = await axios.get<{ data: Category[] }>(
-        `${API_BASE_URL}/categories`,
-        {
-          headers,
-          withCredentials: true,
-          validateStatus: (status) => status < 500, // Don't throw for 4xx errors
-        }
-      );
-
-      if (response.status === 401) {
-        const error = new Error("Session expired. Please log in again.");
-        throw error;
-      }
-
-      if (response.status >= 400) {
-        const error = new Error(
-          `Failed to fetch categories: ${response.status} ${response.statusText}`
-        );
-        // console.error("API error:", error);
-        throw error;
-      }
-
-      // The API returns the categories array directly, not wrapped in a data property
-      const categories = Array.isArray(response.data) ? response.data : [];
-      return categories;
-    } catch (err) {
-      const error = err as AxiosError<{ message?: string }>;
-      const errorMessage =
-        error.response?.data?.message || "Failed to fetch categories";
-      // console.error("Error fetching categories:", error);
-      setError(errorMessage);
-      toast.error(errorMessage);
-      return [];
     } finally {
       setIsLoading(false);
     }

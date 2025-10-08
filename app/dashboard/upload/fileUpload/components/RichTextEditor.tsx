@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
@@ -27,7 +27,7 @@ interface RichTextEditorProps {
 }
 
 export function RichTextEditor({
-  content = '',
+  content = "",
   onChange,
   placeholder = "Tell your story...",
 }: RichTextEditorProps) {
@@ -69,13 +69,14 @@ export function RichTextEditor({
         placeholder,
       }),
     ],
-    content: content || '',
+    content: content || "",
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
     editorProps: {
       attributes: {
-        class: "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl max-w-none focus:outline-none min-h-[600px] px-0 py-8 text-[21px] leading-[32px] text-gray-900 font-serif mx-auto",
+        class:
+          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl max-w-none focus:outline-none min-h-[600px] px-0 py-8 text-[21px] leading-[32px] text-gray-900 font-serif mx-auto",
         style: "font-family: Charter, Georgia, serif;",
       },
     },
@@ -108,7 +109,9 @@ export function RichTextEditor({
     }
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     try {
       const file = event.target.files?.[0];
       if (!file || !editor) return;
@@ -151,13 +154,17 @@ export function RichTextEditor({
   };
 
   const [isClient, setIsClient] = React.useState(false);
-  
+
   React.useEffect(() => {
     setIsClient(true);
   }, []);
 
   if (!isClient || !editor) {
-    return <div className="min-h-[600px] border rounded-lg p-4">Loading editor...</div>;
+    return (
+      <div className="min-h-[600px] border rounded-lg p-4">
+        Loading editor...
+      </div>
+    );
   }
 
   const MenuButton = ({
