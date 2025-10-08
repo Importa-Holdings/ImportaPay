@@ -5,6 +5,8 @@ import { Share, Loader2, ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner";
 import { useAuthStore } from "@/lib/store/authStore";
+import DOMPurify from "dompurify";
+import parse, { domToReact } from "html-react-parser";
 
 interface Post {
   id: number;
@@ -142,25 +144,37 @@ export default function BlogPostClient({
 
   const handleUpdate = async () => {
     try {
-      if (!post) return;
+      if (!post) {
+        toast.error("Post data is not available");
+        return;
+      }
 
-      // Encode the post data to pass as a URL parameter
-      const postData = encodeURIComponent(
-        JSON.stringify({
-          id: post.id,
-          title: post.title,
-          subtitle: post.subtitle,
-          content: post.content,
-          category_id: post.category_id,
-          image: post.image,
-          is_published: post.is_published,
-        })
-      );
+      // Prepare a clean payload (avoid sending any circular refs)
+      const editPayload = {
+        id: post.id,
+        title: post.title,
+        subtitle: post.subtitle || "",
+        content: post.content,
+        category_id: post.category_id,
+        image: post.image || "",
+        is_published: post.is_published,
+        isDraft: false,
+        categories: post.categories
+          ? { id: post.categories.id, name: post.categories.name }
+          : null,
+      };
 
-      router.push(`/dashboard/upload/fileUpload?edit=${postData}`);
+      // Store in sessionStorage for the edit page to pick up
+      sessionStorage.setItem("editingPost", JSON.stringify(editPayload));
+
+      // Navigate to the editor
+      router.push("/dashboard/upload/fileUpload");
+
+      // Show loading state
+      toast.loading("Loading editor...");
     } catch (err) {
-      console.error("Error navigating to edit page:", err);
-      toast.error("Failed to navigate to edit page");
+      console.error("Error preparing edit mode:", err);
+      toast.error("Failed to prepare edit mode. Please try again.");
     }
   };
 
@@ -203,6 +217,162 @@ export default function BlogPostClient({
       setIsDeleting(false);
     }
   };
+
+  /* -------------------- helper to sanitize + normalize -------------------- */
+  function renderRichContent(html: string) {
+    // sanitize incoming HTML
+    const clean = DOMPurify.sanitize(html || "", {
+      ADD_ATTR: ["target", "rel", "class"], // allow these if editor used them
+    });
+
+    // parse & transform nodes to inject safe Tailwind classes + normalize structure
+    return parse(clean, {
+      replace: (node: any) => {
+        if (node.type !== "tag") return;
+
+        const name = node.name;
+        const children = node.children || [];
+        const attribs = node.attribs || {};
+
+        // Headings — larger, serif, spaced like Medium
+        if (name === "h1") {
+          return (
+            <h1 className="text-4xl md:text-5xl font-serif font-bold leading-tight mt-8 mb-4 text-gray-900">
+              {domToReact(children)}
+            </h1>
+          );
+        }
+        if (name === "h2") {
+          return (
+            <h2 className="text-2xl md:text-3xl font-serif font-semibold leading-snug mt-6 mb-3 text-gray-900">
+              {domToReact(children)}
+            </h2>
+          );
+        }
+        if (name === "h3") {
+          return (
+            <h3 className="text-xl font-semibold mt-6 mb-2 text-gray-900">
+              {domToReact(children)}
+            </h3>
+          );
+        }
+
+        // Paragraphs — good line-height and margin
+        if (name === "p") {
+          return (
+            <p className="text-lg leading-[1.65] text-gray-700 mt-4 mb-4">
+              {domToReact(children)}
+            </p>
+          );
+        }
+
+        // Lists — normalize spacing. Unwrap <li><p>…</p></li> to plain <li>
+        if (name === "ul") {
+          return (
+            <ul className="list-disc ml-6 space-y-2 mt-4">
+              {domToReact(children)}
+            </ul>
+          );
+        }
+        if (name === "ol") {
+          return (
+            <ol className="list-decimal ml-6 space-y-2 mt-4">
+              {domToReact(children)}
+            </ol>
+          );
+        }
+        if (name === "li") {
+          // unwrap paragraph inside li if present
+          if (
+            children.length === 1 &&
+            children[0].type === "tag" &&
+            children[0].name === "p"
+          ) {
+            return <li className="ml-0">{domToReact(children[0].children)}</li>;
+          }
+          return <li className="ml-0">{domToReact(children)}</li>;
+        }
+
+        // Images — drop broken/no-src images and ensure responsive + rounded
+        if (name === "img") {
+          const src = attribs.src || attribs["data-src"] || "";
+          if (!src) return null; // remove empty img tags that break layout
+          return (
+            <img
+              src={src}
+              alt={attribs.alt || ""}
+              loading="lazy"
+              className={`${attribs.class || ""} rounded-lg w-full h-auto my-6`}
+            />
+          );
+        }
+
+        // highlight / mark
+        if (
+          name === "mark" ||
+          (name === "span" && attribs.class?.includes("highlight"))
+        ) {
+          return (
+            <mark className="bg-yellow-200 px-1 rounded">
+              {domToReact(children)}
+            </mark>
+          );
+        }
+
+        // links: keep underline + inherit color (and open external links in new tab)
+        if (name === "a") {
+          const href = attribs.href || "#";
+          const isExternal =
+            href &&
+            /^(https?:)?\/\//.test(href) &&
+            !href.startsWith(window.location.origin);
+          return (
+            <a
+              href={href}
+              target={isExternal ? "_blank" : attribs.target || undefined}
+              rel={
+                isExternal ? "noopener noreferrer" : attribs.rel || undefined
+              }
+              className="underline text-purple-600 hover:text-purple-800"
+            >
+              {domToReact(children)}
+            </a>
+          );
+        }
+
+        // blockquote
+        if (name === "blockquote") {
+          return (
+            <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-700 my-6">
+              {domToReact(children)}
+            </blockquote>
+          );
+        }
+
+        // code inline
+        if (name === "code") {
+          return (
+            <code className="bg-gray-100 px-1 py-[2px] rounded text-sm font-mono">
+              {domToReact(children)}
+            </code>
+          );
+        }
+
+        // preformatted code
+        if (name === "pre") {
+          return (
+            <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto my-6">
+              {domToReact(children)}
+            </pre>
+          );
+        }
+
+        // fallback: return nothing to let parser render default nodes
+        return undefined;
+      },
+    });
+  }
+  /* -------------------- end helper -------------------- */
 
   return (
     <div className="min-h-screen bg-white">
@@ -300,11 +470,10 @@ export default function BlogPostClient({
           )}
         </div>
 
-        <div className="prose prose-lg max-w-none">
-          <div className="text-gray-700 leading-relaxed whitespace-pre-line mb-8">
-            {post.content}
-          </div>
-        </div>
+        {/* Rich text content rendering */}
+        <article className="max-w-3xl mx-auto font-serif">
+          {renderRichContent(post.content)}
+        </article>
 
         {post.is_published === 0 && (
           <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">

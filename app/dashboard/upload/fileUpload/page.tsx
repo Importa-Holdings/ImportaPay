@@ -1,18 +1,30 @@
+// Updated BlogEditor component - Replace the textarea section
 "use client";
 
 import React, { useState, useCallback, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  ArrowLeft,
-  Bold,
-  Hash,
-  ImageIcon,
-  Italic,
-  LinkIcon,
-  MoreHorizontal,
-} from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/lib/store/authStore";
+import dynamic from 'next/dynamic';
+
+// Import RichTextEditor with SSR disabled and loading state
+const RichTextEditor = dynamic<RichTextEditorProps>(
+  () => import('./components/RichTextEditor').then((mod) => mod.RichTextEditor),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="min-h-[600px] border rounded-lg p-4">Loading editor...</div>
+    )
+  }
+);
+
+// Define RichTextEditorProps interface to match the component's props
+interface RichTextEditorProps {
+  content: string;
+  onChange: (content: string) => void;
+  placeholder?: string;
+}
 
 interface BlogPost {
   id?: string;
@@ -25,7 +37,6 @@ interface BlogPost {
   image?: string;
 }
 
-// Ensure all functions are properly bound and serializable
 const createBlogPost = (initial?: Partial<BlogPost>): BlogPost => ({
   title: "",
   content: "",
@@ -38,8 +49,24 @@ function BlogEditorContent() {
   const searchParams = useSearchParams();
   const { token, user } = useAuthStore();
   const [post, setPost] = useState<BlogPost>(() => {
-    // Check if we're in edit mode
     if (typeof window !== "undefined") {
+      // Check for editing post in sessionStorage first
+      const editingPost = sessionStorage.getItem('editingPost');
+      if (editingPost) {
+        try {
+          const parsedData = JSON.parse(editingPost);
+          // Clear the session storage after retrieving the data
+          sessionStorage.removeItem('editingPost');
+          return createBlogPost({
+            ...parsedData,
+            isDraft: false,
+          });
+        } catch (e) {
+          console.error("Error parsing editing post data:", e);
+        }
+      }
+
+      // Fall back to URL params for backward compatibility
       const editData = searchParams.get("edit");
       if (editData) {
         try {
@@ -53,7 +80,7 @@ function BlogEditorContent() {
         }
       }
 
-      // Load draft if exists and not in edit mode
+      // Finally, check for saved draft in localStorage
       const saved = localStorage.getItem("draftPost");
       return saved ? JSON.parse(saved) : createBlogPost();
     }
@@ -69,7 +96,6 @@ function BlogEditorContent() {
 
     setIsSaving(true);
     try {
-      // Save to localStorage before navigating
       const postData = {
         ...post,
         updatedAt: new Date().toISOString(),
@@ -77,7 +103,6 @@ function BlogEditorContent() {
 
       localStorage.setItem("draftPost", JSON.stringify(postData));
 
-      // Navigate to the next step with the post data
       const queryParams = new URLSearchParams();
       if (post.id) {
         queryParams.set(
@@ -118,7 +143,6 @@ function BlogEditorContent() {
   }, [post, router]);
 
   useEffect(() => {
-    // Redirect to login if not authenticated
     if (!token || !user) {
       router.push("/blog");
       return;
@@ -164,108 +188,12 @@ function BlogEditorContent() {
           className="w-full text-4xl font-bold mb-6 outline-none bg-transparent"
         />
 
-        {/* Toolbar */}
-        <div className="bg-white border border-gray-200 rounded-lg p-2 mb-4 sticky top-16 z-10">
-          <div className="flex items-center space-x-2 overflow-x-auto">
-            <button
-              type="button"
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="Bold"
-              title="Bold (Ctrl+B)"
-            >
-              <Bold className="w-5 h-5 text-gray-700" />
-            </button>
-            <button
-              type="button"
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="Italic"
-              title="Italic (Ctrl+I)"
-            >
-              <Italic className="w-5 h-5 text-gray-700" />
-            </button>
-            <button
-              type="button"
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="Add Link"
-              title="Add Link (Ctrl+K)"
-            >
-              <LinkIcon className="w-5 h-5 text-gray-700" />
-            </button>
-
-            <div className="relative">
-              <select className="appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm text-gray-700 hover:border-gray-300 focus:outline-none focus:border-purple-500 cursor-pointer">
-                <option>Body</option>
-                <option>Heading 1</option>
-                <option>Heading 2</option>
-                <option>Heading 3</option>
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg
-                  className="w-4 h-4 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="Add link"
-              title="Add link"
-            >
-              <LinkIcon className="w-5 h-5 text-gray-700" />
-            </button>
-
-            <button
-              type="button"
-              className="flex items-center space-x-1 p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="Add heading"
-              title="Add heading"
-            >
-              <Hash className="w-4 h-4 text-gray-700" />
-              <Hash className="w-4 h-4 text-gray-700 -ml-1" />
-            </button>
-
-            <button
-              type="button"
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="More options"
-              title="More options"
-            >
-              <MoreHorizontal className="w-5 h-5 text-gray-700" />
-            </button>
-
-            <button
-              type="button"
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="Insert image"
-              title="Insert image"
-            >
-              <ImageIcon className="w-5 h-5 text-gray-700" />
-            </button>
-          </div>
-        </div>
-
-        {/* Content Editor */}
+        {/* Rich Text Editor - Replaces the old toolbar and textarea */}
         <div className="mt-4">
-          <textarea
-            value={post.content}
-            onChange={(e) => setPost({ ...post, content: e.target.value })}
+          <RichTextEditor
+            content={post.content}
+            onChange={(content) => setPost({ ...post, content })}
             placeholder="Start writing your post here..."
-            className="w-full min-h-[500px] p-4 text-lg text-gray-700 placeholder-gray-400 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-            style={{
-              fontFamily: "system-ui, -apple-system, sans-serif",
-              lineHeight: 1.6,
-            }}
           />
         </div>
       </main>
@@ -273,7 +201,6 @@ function BlogEditorContent() {
   );
 }
 
-// Loading fallback component
 function BlogEditorFallback() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -285,7 +212,6 @@ function BlogEditorFallback() {
   );
 }
 
-// Main export wrapped in Suspense
 export default function BlogEditor() {
   return (
     <Suspense fallback={<BlogEditorFallback />}>

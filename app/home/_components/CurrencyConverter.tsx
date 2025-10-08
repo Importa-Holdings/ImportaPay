@@ -32,14 +32,14 @@ const useExchangeRates = () => {
           setError(data.message);
         }
       } catch (err: unknown) {
-        let errorMessage = 'Failed to fetch exchange rates';
-        
+        let errorMessage = "Failed to fetch exchange rates";
+
         if (err instanceof Error) {
           errorMessage = err.message;
-        } else if (typeof err === 'string') {
+        } else if (typeof err === "string") {
           errorMessage = err;
         }
-        
+
         setError(errorMessage);
       } finally {
         setLoading(false);
@@ -54,27 +54,27 @@ const useExchangeRates = () => {
 
 const CurrencyConverter = () => {
   const { rates, loading, error } = useExchangeRates();
-  const [topAmount, setTopAmount] = useState("1500000");
-  const [bottomAmount, setBottomAmount] = useState("975.41");
+  const [topAmount, setTopAmount] = useState("0");
+  const [bottomAmount, setBottomAmount] = useState("0");
   const [topCurrency, setTopCurrency] = useState("NGN");
   const [bottomCurrency, setBottomCurrency] = useState("USD");
 
   const currencies = [
     { code: "NGN", name: "Nigerian Naira", flag: "🇳🇬", rateKey: "rate_naira" },
     { code: "USD", name: "US Dollar", flag: "🇺🇸", rateKey: "rate_dollar" },
-    { code: "EUR", name: "Euro", flag: "🇪🇺", rateKey: "rate_euro" },
-    { code: "GBP", name: "British Pound", flag: "🇬🇧", rateKey: "rate_pound" },
-    { code: "EGP", name: "Egyptian Pound", flag: "🇪🇬", rateKey: "rate_egp" },
-    { code: "KES", name: "Kenyan Shilling", flag: "🇰🇪", rateKey: "rate_ksh" },
-    {
-      code: "ZAR",
-      name: "South African Rand",
-      flag: "🇿🇦",
-      rateKey: "rate_zar",
-    },
-    { code: "CNY", name: "Chinese Yuan", flag: "🇨🇳", rateKey: "rate_rmb" },
-    { code: "JPY", name: "Japanese Yen", flag: "🇯🇵", rateKey: "rate_jpy" },
-    { code: "AED", name: "UAE Dirham", flag: "🇦🇪", rateKey: "rate_aed" },
+    // { code: "EUR", name: "Euro", flag: "🇪🇺", rateKey: "rate_euro" },
+    // { code: "GBP", name: "British Pound", flag: "🇬🇧", rateKey: "rate_pound" },
+    // { code: "EGP", name: "Egyptian Pound", flag: "🇪🇬", rateKey: "rate_egp" },
+    // { code: "KES", name: "Kenyan Shilling", flag: "🇰🇪", rateKey: "rate_ksh" },
+    // {
+    //   code: "ZAR",
+    //   name: "South African Rand",
+    //   flag: "🇿🇦",
+    //   rateKey: "rate_zar",
+    // },
+    // { code: "CNY", name: "Chinese Yuan", flag: "🇨🇳", rateKey: "rate_rmb" },
+    // { code: "JPY", name: "Japanese Yen", flag: "🇯🇵", rateKey: "rate_jpy" },
+    // { code: "AED", name: "UAE Dirham", flag: "🇦🇪", rateKey: "rate_aed" },
   ];
 
   const convertCurrency = (
@@ -84,10 +84,13 @@ const CurrencyConverter = () => {
   ): string => {
     if (!rates || !amount) return "0";
 
-    const fromRateKey = currencies.find((c) => c.code === fromCurrency)?.rateKey || '';
-    const toRateKey = currencies.find((c) => c.code === toCurrency)?.rateKey || '';
-    
-    const fromRate = fromRateKey && rates[fromRateKey] ? Number(rates[fromRateKey]) : 1;
+    const fromRateKey =
+      currencies.find((c) => c.code === fromCurrency)?.rateKey || "";
+    const toRateKey =
+      currencies.find((c) => c.code === toCurrency)?.rateKey || "";
+
+    const fromRate =
+      fromRateKey && rates[fromRateKey] ? Number(rates[fromRateKey]) : 1;
     const toRate = toRateKey && rates[toRateKey] ? Number(rates[toRateKey]) : 1;
 
     const usdAmount = parseFloat(amount) * fromRate;
@@ -118,7 +121,7 @@ const CurrencyConverter = () => {
     const currentBottomCurrency = topCurrency;
     const currentTopAmount = bottomAmount;
     const currentBottomAmount = topAmount;
-    
+
     // Update states with stored values
     setTopCurrency(currentTopCurrency);
     setBottomCurrency(currentBottomCurrency);

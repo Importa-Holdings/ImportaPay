@@ -1,0 +1,10 @@
+{
+  "[project]/app/dashboard/upload/fileUpload/components/RichTextEditor.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/app/dashboard/upload/fileUpload/components/RichTextEditor.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/node_modules_d9ab5bed._.js",
+      "static/chunks/app_dashboard_upload_fileUpload_components_RichTextEditor_tsx_efcce645._.js",
+      "static/chunks/app_dashboard_upload_fileUpload_components_RichTextEditor_tsx_b96b1fc9._.js"
+    ]
+  }
+}

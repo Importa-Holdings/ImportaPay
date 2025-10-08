@@ -4,6 +4,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Navbar } from "@/components/navbar/Navbar";
+import Link from "next/link";
 
 const LandingPage = () => {
   return (
@@ -44,38 +45,42 @@ const LandingPage = () => {
 
             {/* Download Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 md:pt-6 pt-35">
-              <Button
-                size="lg"
-                className="bg-white text-black border-white/30 hover:bg-white/30 backdrop-blur-sm
+              <Link href="https://apps.apple.com/app/id6752268757">
+                <Button
+                  size="lg"
+                  className="bg-white text-black border-white/30 hover:bg-white/30 backdrop-blur-sm
                            transition-all duration-300 hover:scale-105
                            flex items-center gap-3 md:px-6 md:py-4 text-2xl md:text-lg p-10"
-              >
-                <Image
-                  src="/image/Apple.png"
-                  alt="Apple"
-                  //
-                  height="50"
-                  width="50"
-                  className="w-[25px] h-[25px]"
-                />
-                Download for iOS
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-white text-black border-white/30 hover:bg-white/20 backdrop-blur-sm
+                >
+                  <Image
+                    src="/image/Apple.png"
+                    alt="Apple"
+                    //
+                    height="50"
+                    width="50"
+                    className="w-[25px] h-[25px]"
+                  />
+                  Download for iOS
+                </Button>
+              </Link>
+              <Link href="https://play.google.com/store/apps/details?id=com.importapay">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="bg-white text-black border-white/30 hover:bg-white/20 backdrop-blur-sm
                            transition-all duration-300 hover:scale-105
                            flex items-center gap-3 md:px-6 md:py-4 text-2xl md:text-lg p-10"
-              >
-                <Image
-                  src="/image/PlayStore.png"
-                  alt="playstore"
-                  height="50"
-                  width="50"
-                  className="w-[25px] h-[25px]"
-                />
-                Download for Android
-              </Button>
+                >
+                  <Image
+                    src="/image/PlayStore.png"
+                    alt="playstore"
+                    height="50"
+                    width="50"
+                    className="w-[25px] h-[25px]"
+                  />
+                  Download for Android
+                </Button>
+              </Link>
             </div>
 
             {/* Feature Highlight */}
