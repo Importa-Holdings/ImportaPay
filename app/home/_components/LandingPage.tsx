@@ -5,18 +5,52 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Navbar } from "@/components/navbar/Navbar";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const LandingPage = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time or wait for necessary assets
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // Show loader for at least 2 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="text-center">
+          <Image
+            src="/video/transparirent.gif"
+            alt="Loading..."
+            width={500}
+            height={500}
+            className="mx-auto"
+            priority
+          />
+          {/* <p className="mt-4 text-lg text-gray-600">Welcome...</p> */}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
-      className="
+      className={`
         min-h-screen
         bg-cover
         bg-[500px]       /* default: center on mobile */
-        md:bg-center        /* from md screens up: shift to left (or pick your preference) */
+        md:bg-center     /* from md screens up: shift to left (or pick your preference) */
         relative
         overflow-hidden
-      "
+        ${
+          isLoading
+            ? "opacity-0"
+            : "opacity-100 transition-opacity duration-500"
+        }
+      `}
       style={{
         backgroundImage:
           "url('https://res.cloudinary.com/detr9iyys/image/upload/v1752324671/landing-bg_yrmnq6.png')",
@@ -44,21 +78,20 @@ const LandingPage = () => {
             </p>
 
             {/* Download Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 md:pt-6 pt-35">
+            <div className="flex flex-col items-center sm:items-start sm:flex-row gap-4 md:pt-6 pt-35">
               <Link href="https://apps.apple.com/app/id6752268757">
                 <Button
                   size="lg"
                   className="bg-white text-black border-white/30 hover:bg-white/30 backdrop-blur-sm
                            transition-all duration-300 hover:scale-105
-                           flex items-center gap-3 md:px-6 md:py-4 text-2xl md:text-lg p-10"
+                           flex items-center gap-2 sm:gap-3 px-4 py-3 sm:px-6 sm:py-4 text-base sm:text-lg"
                 >
                   <Image
                     src="/image/Apple.png"
                     alt="Apple"
-                    //
-                    height="50"
-                    width="50"
-                    className="w-[25px] h-[25px]"
+                    height={50}
+                    width={50}
+                    className="w-5 h-5 sm:w-6 sm:h-6"
                   />
                   Download for iOS
                 </Button>
@@ -69,14 +102,14 @@ const LandingPage = () => {
                   variant="outline"
                   className="bg-white text-black border-white/30 hover:bg-white/20 backdrop-blur-sm
                            transition-all duration-300 hover:scale-105
-                           flex items-center gap-3 md:px-6 md:py-4 text-2xl md:text-lg p-10"
+                           flex items-center gap-2 sm:gap-3 px-4 py-3 sm:px-6 sm:py-4 text-base sm:text-lg"
                 >
                   <Image
                     src="/image/PlayStore.png"
                     alt="playstore"
-                    height="50"
-                    width="50"
-                    className="w-[25px] h-[25px]"
+                    height={50}
+                    width={50}
+                    className="w-5 h-5 sm:w-6 sm:h-6"
                   />
                   Download for Android
                 </Button>

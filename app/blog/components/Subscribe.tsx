@@ -1,34 +1,26 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, FormEvent } from "react";
 import { Mail, Check } from "lucide-react";
+import { useSubscribe } from "@/hooks/useSubscribe";
+import { Toaster } from "sonner";
 
 const Subscribe = () => {
   const [email, setEmail] = useState("");
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { subscribe, isLoading, isSubscribed } = useSubscribe();
 
-  const handleSubmit = async () => {
-    if (!email) return;
-
-    setIsLoading(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    setIsLoading(false);
-    setIsSubscribed(true);
-
-    // Reset after 3 seconds
-    setTimeout(() => {
-      setIsSubscribed(false);
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const { success } = await subscribe(email);
+    if (success) {
       setEmail("");
-    }, 3000);
+    }
   };
 
   return (
     <div className="mb-10">
-      <div className="bg-[#6A0DAD] flex items-center justify-center p-4">
-        <div className="w-full max-w-2xl mx-auto text-center">
+      <Toaster position="top-center" richColors />
+      <div className="bg-[#6A0DAD] flex items-center justify-center p-6 sm:p-8">
+        <div className="w-full max-w-2xl mx-auto">
           {/* Animated background elements */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-white/5 rounded-full blur-xl animate-pulse"></div>
@@ -38,54 +30,51 @@ const Subscribe = () => {
 
           {/* Main content */}
           <div className="relative z-10">
-            <div className="mb-8 transform transition-all duration-1000 hover:scale-105">
-              <h1 className="text-lg md:text-2xl font-bold text-white mb-4 ">
-                Never miss an update!
-              </h1>
-              <p className="text-purple-100/90 text-sm md:text-sm max-w-lg mx-auto leading-relaxed">
-                Be the first to know about new features, partnerships,
-                <br />
-                and insights shaping the future of finance
+            <form onSubmit={handleSubmit} className="relative z-10">
+              <h3 className="text-2xl font-bold text-white mb-2 text-center sm:text-left">
+                Subscribe to our newsletter
+              </h3>
+              <p className="text-white/80 mb-6 text-center sm:text-left">
+                Get the latest updates and news delivered to your inbox
               </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <div className="relative flex-1">
-                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
-                  className="w-full px-12 py-4 bg-white/10  border border-white/20 rounded-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-300"
-                  required
-                />
+              <div className="flex flex-col sm:flex-row gap-3 w-full">
+                <div className="relative flex-1">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
+                    disabled={isLoading || isSubscribed}
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={isLoading || isSubscribed}
+                  className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                    isSubscribed
+                      ? 'bg-green-500 text-white'
+                      : 'bg-white text-[#6A0DAD] hover:bg-white/90 hover:scale-[1.02] active:scale-95'
+                  } flex items-center justify-center gap-2 min-w-[150px] disabled:opacity-70 disabled:cursor-not-allowed`}
+                >
+                  {isLoading ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-t-transparent border-[#6A0DAD] rounded-full animate-spin"></span>
+                      Subscribing...
+                    </>
+                  ) : isSubscribed ? (
+                    <>
+                      <Check className="w-5 h-5" />
+                      Subscribed!
+                    </>
+                  ) : (
+                    'Subscribe'
+                  )}
+                </button>
               </div>
-
-              <button
-                onClick={handleSubmit}
-                disabled={isLoading || isSubscribed}
-                className={`px-8 py-4 rounded-lg font-semibold transition-all duration-300 min-w-[120px] ${
-                  isSubscribed
-                    ? "bg-green-500 text-white"
-                    : "bg-white text-purple-700 hover:bg-purple-50 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50"
-                } ${isLoading ? "opacity-80" : ""}`}
-              >
-                {isLoading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="w-5 h-5 border-2 border-purple-700/30 border-t-purple-700 rounded-full animate-spin"></div>
-                  </div>
-                ) : isSubscribed ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <Check className="w-5 h-5" />
-                    <span>Subscribed!</span>
-                  </div>
-                ) : (
-                  "Subscribe"
-                )}
-              </button>
-            </div>
-
+            </form>
             {/* Success message */}
             {isSubscribed && (
               <div className="mt-4 text-green-300 font-medium animate-fade-in">

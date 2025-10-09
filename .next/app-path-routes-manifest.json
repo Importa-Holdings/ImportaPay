@@ -1,14 +1,14 @@
 {
-  "/_not-found/page": "/_not-found",
   "/api/posts/route": "/api/posts",
+  "/_not-found/page": "/_not-found",
   "/favicon.ico/route": "/favicon.ico",
   "/blog/page": "/blog",
   "/dashboard/page": "/dashboard",
-  "/dashboard/upload/fileUpload/imagefile/page": "/dashboard/upload/fileUpload/imagefile",
-  "/dashboard/upload/page": "/dashboard/upload",
-  "/dashboard/upload/fileUpload/page": "/dashboard/upload/fileUpload",
   "/page": "/",
-  "/blog/[id]/page": "/blog/[id]",
+  "/dashboard/upload/fileUpload/page": "/dashboard/upload/fileUpload",
+  "/dashboard/upload/page": "/dashboard/upload",
+  "/dashboard/upload/fileUpload/imagefile/page": "/dashboard/upload/fileUpload/imagefile",
   "/login/page": "/login",
+  "/blog/[id]/page": "/blog/[id]",
   "/register/page": "/register"
 }

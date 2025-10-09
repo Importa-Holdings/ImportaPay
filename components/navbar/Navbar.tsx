@@ -44,9 +44,17 @@ export const Navbar = () => {
                 <span className="text-white">
                   <Link
                     href="/dashboard"
-                    className="text-white hover:text-white transition-colors duration-200"
+                    className="text-white transition-colors duration-200"
                   >
                     Dashboard
+                  </Link>
+                </span>
+                <span className="text-white">
+                  <Link
+                    href="/blog"
+                    className="text-white transition-colors duration-200"
+                  >
+                    Blog
                   </Link>
                 </span>
                 <Button
@@ -73,50 +81,62 @@ export const Navbar = () => {
                   Blog
                 </Link>
                 {isDashboard ? (
-                  <Button
-                    onClick={logout}
-                    variant="secondary"
-                    className="bg-red-600 text-white hover:bg-red-700 backdrop-blur-sm cursor-pointer"
-                  >
-                    Logout
-                  </Button>
+                  <>
+                    <Button
+                      onClick={logout}
+                      variant="secondary"
+                      className="bg-red-600 text-white hover:bg-red-700 backdrop-blur-sm cursor-pointer"
+                    >
+                      Logout
+                    </Button>
+                  </>
                 ) : (
                   <div className="relative">
-                  <Button
-                    variant="secondary"
-                    className="bg-[#6A0DAD] text-white hover:bg-white/30 backdrop-blur-sm cursor-pointer flex items-center gap-1"
-                    onClick={() => setIsDownloadDropdownOpen(!isDownloadDropdownOpen)}
-                  >
-                    Download app
-                    <ChevronDown className={`w-4 h-4 transition-transform ${isDownloadDropdownOpen ? 'transform rotate-180' : ''}`} />
-                  </Button>
-                  {isDownloadDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                      <div className="py-1" role="menu" aria-orientation="vertical">
-                        <a
-                          href="https://apps.apple.com/app/id6752268757"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          role="menuitem"
+                    <Button
+                      variant="secondary"
+                      className="bg-[#6A0DAD] text-white hover:text-[#6A0DAD] hover:bg-white/30 backdrop-blur-sm cursor-pointer flex items-center gap-1"
+                      onClick={() =>
+                        setIsDownloadDropdownOpen(!isDownloadDropdownOpen)
+                      }
+                    >
+                      Download app
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform ${
+                          isDownloadDropdownOpen ? "transform rotate-180" : ""
+                        }`}
+                      />
+                    </Button>
+                    {isDownloadDropdownOpen && (
+                      <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                        <div
+                          className="py-1"
+                          role="menu"
+                          aria-orientation="vertical"
                         >
-                          <Apple className="w-4 h-4 mr-2 text-gray-500" />
-                          Download for iOS
-                        </a>
-                        <a
-                          href="https://play.google.com/store/apps/details?id=com.importapay"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          role="menuitem"
-                        >
-                          <Smartphone className="w-4 h-4 mr-2 text-gray-500" />
-                          Download for Android
-                        </a>
+                          <a
+                            href="https://apps.apple.com/app/id6752268757"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:text-[#6A0DAD] hover:bg-gray-100"
+                            role="menuitem"
+                          >
+                            <Apple className="w-4 h-4 mr-2 text-gray-500" />
+                            Download for iOS
+                          </a>
+                          <a
+                            href="https://play.google.com/store/apps/details?id=com.importapay"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:text-[#6A0DAD] hover:bg-gray-100"
+                            role="menuitem"
+                          >
+                            <Smartphone className="w-4 h-4 mr-2 text-gray-500" />
+                            Download for Android
+                          </a>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
                 )}
               </>
             )}
@@ -139,22 +159,37 @@ export const Navbar = () => {
         <div className="md:hidden backdrop-blur-md bg-[#6A0DAD]/10 border-t border-white/20">
           <div className="px-4 pt-2 pb-4 space-y-2">
             {isAuthenticated && user ? (
-              <div className="space-y-2">
-                <div className="px-3 py-2 text-white">
-                  {user.first_name} {user.last_name}
+              <>
+                <div className="space-y-2">
+                  <Button className="w-full bg-red-600 text-white hover:bg-red-700 backdrop-blur-sm">
+                    <Link
+                      href="/blog"
+                      className="text-white transition-colors duration-200"
+                    >
+                      Blog
+                    </Link>
+                  </Button>
+                  <Button className="w-full bg-red-600 text-white hover:bg-red-700 backdrop-blur-sm">
+                    <Link
+                      href="/dashboard"
+                      className="text-white transition-colors duration-200"
+                    >
+                      Dashboard
+                    </Link>
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      logout();
+                      setIsMenuOpen(false);
+                    }}
+                    variant="secondary"
+                    className="w-full bg-red-600 text-white hover:bg-red-700 backdrop-blur-sm"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Logging out..." : "Logout"}
+                  </Button>
                 </div>
-                <Button
-                  onClick={() => {
-                    logout();
-                    setIsMenuOpen(false);
-                  }}
-                  variant="secondary"
-                  className="w-full bg-red-600 text-white hover:bg-red-700 backdrop-blur-sm"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Logging out..." : "Logout"}
-                </Button>
-              </div>
+              </>
             ) : (
               <>
                 <Link
@@ -173,16 +208,34 @@ export const Navbar = () => {
                 </Link>
                 <div className="space-y-3 px-3 pt-2">
                   {isDashboard ? (
-                    <Button
-                      onClick={() => {
-                        logout();
-                        setIsMenuOpen(false);
-                      }}
-                      variant="secondary"
-                      className="w-full bg-red-600 text-white hover:bg-red-700 backdrop-blur-sm"
-                    >
-                      Logout
-                    </Button>
+                    <>
+                      <span className="text-white">
+                        <Link
+                          href="/blog"
+                          className="text-white transition-colors duration-200"
+                        >
+                          Blog
+                        </Link>
+                      </span>
+                      <span className="text-white">
+                        <Link
+                          href="/dashboard"
+                          className="text-white transition-colors duration-200"
+                        >
+                          Dashboard
+                        </Link>
+                      </span>
+                      <Button
+                        onClick={() => {
+                          logout();
+                          setIsMenuOpen(false);
+                        }}
+                        variant="secondary"
+                        className="w-full bg-red-600 text-white hover:bg-red-700 backdrop-blur-sm"
+                      >
+                        Logout
+                      </Button>
+                    </>
                   ) : (
                     <>
                       <a
