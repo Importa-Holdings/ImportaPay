@@ -62,13 +62,40 @@ function PublishPostContent() {
 
   const loadData = useCallback(async () => {
     try {
-      // Prefer sessionStorage for edit payload to avoid oversized URLs.
-      const editingPost = sessionStorage.getItem("editingPost");
-      if (editingPost) {
-        try {
-          const parsedData = JSON.parse(editingPost);
-          sessionStorage.removeItem("editingPost");
+      const sessionEditData = sessionStorage.getItem("publishingEditPost");
 
+      if (sessionEditData) {
+        try {
+          const parsedData = JSON.parse(sessionEditData);
+          setPost({
+            ...parsedData,
+            isDraft: false,
+          });
+          setSubtitle(parsedData.subtitle || "");
+          setSelectedCategory(parsedData.category_id || "");
+
+          if (parsedData.image) {
+            setImagePreview(
+              parsedData.image.startsWith("http")
+                ? parsedData.image
+                : `https://admin-api.pay.importa.biz/storage/${parsedData.image}`,
+            );
+          }
+
+          setIsEditing(true);
+          sessionStorage.removeItem("publishingEditPost");
+          return;
+        } catch (e) {
+          console.error("Error parsing session edit data:", e);
+          sessionStorage.removeItem("publishingEditPost");
+        }
+      }
+
+      // Check if we're in edit mode
+      const editData = searchParams.get("edit");
+      if (editData) {
+        try {
+          const parsedData = JSON.parse(decodeURIComponent(editData));
           setPost({
             ...parsedData,
             isDraft: false,
@@ -86,56 +113,15 @@ function PublishPostContent() {
 
           setIsEditing(true);
         } catch (e) {
-          console.error("Error parsing editing post data:", e);
+          console.error("Error parsing edit data:", e);
           toast.error("Error loading post data");
           router.push("/dashboard/upload/fileUpload");
           return;
         }
       } else {
-        // Backward compatibility for old links containing edit payload in URL.
-        const editData = searchParams.get("edit");
-        if (editData) {
-          try {
-            const parsedData = JSON.parse(decodeURIComponent(editData));
-            setPost({
-              ...parsedData,
-              isDraft: false,
-            });
-            setSubtitle(parsedData.subtitle || "");
-            setSelectedCategory(parsedData.category_id || "");
-
-            if (parsedData.image) {
-              setImagePreview(
-                parsedData.image.startsWith("http")
-                  ? parsedData.image
-                  : `https://admin-api.pay.importa.biz/storage/${parsedData.image}`,
-              );
-            }
-
-            setIsEditing(true);
-            return;
-          } catch (e) {
-            console.error("Error parsing edit data:", e);
-          }
-        }
-
         const savedPost = localStorage.getItem("draftPost");
         if (savedPost) {
-          const parsedPost = JSON.parse(savedPost);
-          setPost(parsedPost);
-          setSubtitle(parsedPost.subtitle || "");
-          setSelectedCategory(parsedPost.category_id || "");
-
-          if (parsedPost.image) {
-            setImagePreview(
-              parsedPost.image.startsWith("http")
-                ? parsedPost.image
-                : `https://admin-api.pay.importa.biz/storage/${parsedPost.image}`,
-            );
-          }
-
-          // If a saved post has an id, treat this flow as edit mode.
-          setIsEditing(Boolean(parsedPost.id));
+          setPost(JSON.parse(savedPost));
         } else {
           toast.error("No post data found");
           router.push("/dashboard/upload/fileUpload");

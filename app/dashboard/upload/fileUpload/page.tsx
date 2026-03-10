@@ -106,9 +106,8 @@ function BlogEditorContent() {
       localStorage.setItem("draftPost", JSON.stringify(postData));
 
       if (post.id) {
-        // Keep edit metadata out of the URL to avoid 414 URI Too Long.
         sessionStorage.setItem(
-          "editingPost",
+          "publishingEditPost",
           JSON.stringify({
             id: post.id,
             title: post.title,
@@ -119,6 +118,8 @@ function BlogEditorContent() {
             image: post.image,
           }),
         );
+      } else {
+        sessionStorage.removeItem("publishingEditPost");
       }
 
       router.push("/dashboard/upload/fileUpload/imagefile");
