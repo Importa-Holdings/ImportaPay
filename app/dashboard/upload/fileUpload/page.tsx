@@ -6,17 +6,19 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/lib/store/authStore";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
 // Import RichTextEditor with SSR disabled and loading state
 const RichTextEditor = dynamic<RichTextEditorProps>(
-  () => import('./components/RichTextEditor').then((mod) => mod.RichTextEditor),
-  { 
+  () => import("./components/RichTextEditor").then((mod) => mod.RichTextEditor),
+  {
     ssr: false,
     loading: () => (
-      <div className="min-h-[600px] border rounded-lg p-4">Loading editor...</div>
-    )
-  }
+      <div className="min-h-[600px] border rounded-lg p-4">
+        Loading editor...
+      </div>
+    ),
+  },
 );
 
 // Define RichTextEditorProps interface to match the component's props
@@ -51,12 +53,12 @@ function BlogEditorContent() {
   const [post, setPost] = useState<BlogPost>(() => {
     if (typeof window !== "undefined") {
       // Check for editing post in sessionStorage first
-      const editingPost = sessionStorage.getItem('editingPost');
+      const editingPost = sessionStorage.getItem("editingPost");
       if (editingPost) {
         try {
           const parsedData = JSON.parse(editingPost);
           // Clear the session storage after retrieving the data
-          sessionStorage.removeItem('editingPost');
+          sessionStorage.removeItem("editingPost");
           return createBlogPost({
             ...parsedData,
             isDraft: false,
@@ -103,10 +105,10 @@ function BlogEditorContent() {
 
       localStorage.setItem("draftPost", JSON.stringify(postData));
 
-      const queryParams = new URLSearchParams();
       if (post.id) {
-        queryParams.set(
-          "edit",
+        // Keep edit metadata out of the URL to avoid 414 URI Too Long.
+        sessionStorage.setItem(
+          "editingPost",
           JSON.stringify({
             id: post.id,
             title: post.title,
@@ -115,13 +117,11 @@ function BlogEditorContent() {
             category_id: post.category_id,
             is_published: post.is_published,
             image: post.image,
-          })
+          }),
         );
       }
 
-      router.push(
-        `/dashboard/upload/fileUpload/imagefile?${queryParams.toString()}`
-      );
+      router.push("/dashboard/upload/fileUpload/imagefile");
     } catch (error) {
       console.error("Error saving draft:", error);
       toast.error("Failed to save draft");
@@ -134,7 +134,7 @@ function BlogEditorContent() {
     if (
       (post.title || post.content) &&
       !window.confirm(
-        "You have unsaved changes. Are you sure you want to leave?"
+        "You have unsaved changes. Are you sure you want to leave?",
       )
     ) {
       return;

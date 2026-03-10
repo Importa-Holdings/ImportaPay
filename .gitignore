@@ -12,8 +12,8 @@
 
 # testing
 /coverage
-
-
+.next*
+/next
 
 # misc
 .DS_Store

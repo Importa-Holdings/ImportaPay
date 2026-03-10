@@ -20,7 +20,7 @@ const useExchangeRates = () => {
       try {
         setLoading(true);
         const response = await fetch(
-          "https://importa-pay-payments.onrender.com/api/toronet/rate"
+          "https://importa-pay-payments-x72y4.ondigitalocean.app/api/toronet/rate"
         );
         const data = await response.json();
 
