@@ -69,14 +69,14 @@ export const Navbar = () => {
             ) : (
               <>
                 <Link
-                  href="/home"
-                  className="text-white hover:text-white transition-colors duration-200"
+                  href="/"
+                  className="text-black hover:text-[#6A0DAD] transition-colors duration-200"
                 >
                   Home
                 </Link>
                 <Link
                   href="/blog"
-                  className="text-white hover:text-white transition-colors duration-200"
+                  className="text-black hover:text-[#6A0DAD] transition-colors duration-200"
                 >
                   Blog
                 </Link>
@@ -193,7 +193,7 @@ export const Navbar = () => {
             ) : (
               <>
                 <Link
-                  href="/home"
+                  href="/"
                   className="block px-3 py-2 text-white hover:text-white transition-colors duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >

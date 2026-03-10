@@ -71,7 +71,7 @@ export const Navbar = () => {
         <div className="md:hidden backdrop-blur-md bg-[#6A0DAD]/10 border-t border-white/20">
           <div className="px-4 pt-2 pb-4 space-y-2">
             <Link
-              href="/home"
+              href="/"
               className="block px-3 py-2 text-black hover:text-white transition-colors duration-200"
               onClick={() => setIsMenuOpen(false)}
             >

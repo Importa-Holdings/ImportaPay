@@ -80,24 +80,30 @@ const Footer = () => {
             {/* Copyright */}
             <div className="text-center lg:text-left">
               <p className="text-gray-600 text-sm">
-                (c) 2025 Importa Holdings Company LTD ( Company Number 16317892
-                ). All right reserved.
+                (c) {new Date().getFullYear()} Importa Holdings Company LTD (
+                Company Number 16317892 ). All right reserved.
               </p>
             </div>
 
             {/* Legal Links */}
             <div className="flex space-x-6">
               <a
-                href="https://importapay.gitbook.io/importapay-t-and-c/privacy-policy"
+                href="https://importapay.gitbook.io/importapay-t-and-c/global-aml-policy"
                 className="text-gray-600 hover:text-gray-900 text-sm transition-colors duration-200"
               >
-                Privacy policy
+                AML policy
               </a>
               <a
                 href="https://importapay.gitbook.io/importapay-t-and-c/"
                 className="text-gray-600 hover:text-gray-900 text-sm transition-colors duration-200"
               >
                 Terms of use
+              </a>
+              <a
+                href="https://importapay.gitbook.io/importapay-t-and-c/privacy-policy"
+                className="text-gray-600 hover:text-gray-900 text-sm transition-colors duration-200"
+              >
+                Privacy policy
               </a>
             </div>
           </div>

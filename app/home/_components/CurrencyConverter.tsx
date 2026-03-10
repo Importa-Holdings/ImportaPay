@@ -6,6 +6,7 @@ interface ExchangeRates {
   rate_dollar?: string;
   amount_in_naira?: string;
   markedup_amount_in_naira?: string;
+  usdc_buy_rate?: string; // ← NEW: USDC to NGN rate
   message?: string;
   [key: string]: string | undefined;
 }
@@ -20,16 +21,45 @@ const useExchangeRates = () => {
       try {
         setLoading(true);
         const response = await fetch(
-          "https://importa-pay-payments-x72y4.ondigitalocean.app/api/toronet/rate"
+          "https://importa-pay-payments-x72y4.ondigitalocean.app/api/toronet/rate",
         );
         const data = await response.json();
 
-        console.log(data);
-        if (data.success) {
-          setRates(data.response);
+        // Existing USD → NGN rate
+        const usdResponse = await fetch(
+          "https://importa-pay-payments-x72y4.ondigitalocean.app/api/toronet/rate",
+        );
+        const usdData = await usdResponse.json();
+
+        // New USDC → NGN rate
+        const usdcResponse = await fetch(
+          "https://importa-pay-payments-x72y4.ondigitalocean.app/api/usdc/get-exchangerate/USDC?chain=ARBITRUM&tokenAmount=5",
+        );
+        const usdcData = await usdcResponse.json();
+
+        console.log("USD data:", usdData);
+        console.log("USDC data:", usdcData);
+
+        const combinedRates: ExchangeRates = {};
+
+        if (usdData.success) {
+          combinedRates.rate_dollar = usdData.response.rate_dollar;
+          combinedRates.amount_in_naira = usdData.response.amount_in_naira;
+          combinedRates.markedup_amount_in_naira =
+            usdData.response.markedup_amount_in_naira;
         } else {
-          setError(data.message);
+          setError(usdData.message || "Failed to fetch USD rate");
+          return;
         }
+
+        if (usdcData.message === "successfully fetched rate") {
+          combinedRates.usdc_buy_rate = usdcData.response.buy.toString();
+        } else {
+          setError("Failed to fetch USDC rate");
+          return;
+        }
+
+        setRates(combinedRates);
       } catch (err: unknown) {
         let errorMessage = "Failed to fetch exchange rates";
 
@@ -61,34 +91,58 @@ const CurrencyConverter = () => {
   const currencies = [
     { code: "NGN", name: "Nigerian Naira", flag: "🇳🇬" },
     { code: "USD", name: "US Dollar", flag: "🇺🇸" },
+    { code: "USDC", name: "USD Coin", flag: "usdc" }, // ← NEW: USDC added
   ];
 
   const convertCurrency = (
     amount: string,
     fromCurrency: string,
-    toCurrency: string
+    toCurrency: string,
   ): string => {
     if (!rates || !amount || parseFloat(amount) === 0) return "0";
 
     const amountValue = parseFloat(amount);
 
-    // USD to NGN conversion using markedup_amount_in_naira
+    // USD to NGN
     if (fromCurrency === "USD" && toCurrency === "NGN") {
       const usdToNgnRate = parseFloat(
-        rates.markedup_amount_in_naira || rates.amount_in_naira || "0"
+        rates.markedup_amount_in_naira || rates.amount_in_naira || "0",
       );
       const result = amountValue * usdToNgnRate;
       return result.toFixed(2);
     }
 
-    // NGN to USD conversion
+    // NGN to USD
     if (fromCurrency === "NGN" && toCurrency === "USD") {
       const ngnToUsdRate = parseFloat(
-        rates.markedup_amount_in_naira || rates.amount_in_naira || "0"
+        rates.markedup_amount_in_naira || rates.amount_in_naira || "0",
       );
       if (ngnToUsdRate === 0) return "0";
       const result = amountValue / ngnToUsdRate;
       return result.toFixed(2);
+    }
+
+    // USDC to NGN
+    if (fromCurrency === "USDC" && toCurrency === "NGN") {
+      const usdcToNgnRate = parseFloat(rates.usdc_buy_rate || "0");
+      const result = amountValue * usdcToNgnRate;
+      return result.toFixed(2);
+    }
+
+    // NGN to USDC
+    if (fromCurrency === "NGN" && toCurrency === "USDC") {
+      const ngnToUsdcRate = parseFloat(rates.usdc_buy_rate || "0");
+      if (ngnToUsdcRate === 0) return "0";
+      const result = amountValue / ngnToUsdcRate;
+      return result.toFixed(2);
+    }
+
+    // USD ↔ USDC (assume 1:1 since both are USD-pegged)
+    if (
+      (fromCurrency === "USD" && toCurrency === "USDC") ||
+      (fromCurrency === "USDC" && toCurrency === "USD")
+    ) {
+      return amountValue.toFixed(2);
     }
 
     // Same currency
@@ -112,13 +166,11 @@ const CurrencyConverter = () => {
   };
 
   const handleSwapCurrencies = () => {
-    // Store current values before swapping
     const currentTopCurrency = bottomCurrency;
     const currentBottomCurrency = topCurrency;
     const currentTopAmount = bottomAmount;
     const currentBottomAmount = topAmount;
 
-    // Update states with stored values
     setTopCurrency(currentTopCurrency);
     setBottomCurrency(currentBottomCurrency);
     setTopAmount(currentTopAmount);
