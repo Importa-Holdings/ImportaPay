@@ -20,11 +20,6 @@ const useExchangeRates = () => {
     const fetchRates = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          "https://importa-pay-payments-x72y4.ondigitalocean.app/api/toronet/rate",
-        );
-        const data = await response.json();
-
         // Existing USD → NGN rate
         const usdResponse = await fetch(
           "https://importa-pay-payments-x72y4.ondigitalocean.app/api/toronet/rate",
