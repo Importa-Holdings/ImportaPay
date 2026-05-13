@@ -122,7 +122,7 @@ const LandingPage = () => {
                 <Check size={14} className="text-green-400" />
               </div>
               <span className="text-white/90 md:text-lg text-[15px]">
-                First 5 transactions are free for our early users
+                Free to use, no hidden fees, and no need for a dollar account.
               </span>
             </div>
           </div>

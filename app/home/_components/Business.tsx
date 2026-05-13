@@ -36,7 +36,7 @@ const Business = () => {
               {/* Image */}
               <div className="flex justify-center items-center">
                 <Image
-                  src="/image/Group10.png"
+                  src="/image/Alla.png"
                   alt="Illustration of amount"
                   width={450}
                   height={450}
@@ -46,84 +46,6 @@ const Business = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="flex flex-col gap-[30px] md:flex-row justify-center items-center">
-        {/* Send Money Card */}
-        <Card
-          className="
-      bg-[#F0E7F7] rounded-3xl shadow-lg
-      w-full md:w-[600px]      /* full width on mobile, 600px at md+ */
-      h-auto md:h-[500px]      /* auto height on mobile, 500px at md+ */
-      pt-[10px]
-      flex flex-col justify-center items-center
-    "
-        >
-          <CardContent className="p-0">
-            <div className="space-y-6">
-              {/* Image with gradient overlay */}
-              <div className="relative flex justify-center items-center">
-                <Image
-                  src="/image/trans.png"
-                  alt="Illustration of amount"
-                  width={350}
-                  height={350}
-                  className="w-[350px] h-[300px]"
-                />
-                {/* Overlay: transparent white → full #F0E7F7 */}
-                <div
-                  className="
-              absolute inset-0
-              bg-gradient-to-b
-              from-white/10
-              via-white/2
-              via-75%
-              to-[#F0E7F7]
-            "
-                />
-              </div>
-
-              <div className="px-12 pb-12">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Send money fast. Save more
-                </h3>
-                <p className="text-gray-600">
-                  Transfers are processed quickly through our trusted payment
-                  partners keeping your costs low and your business moving.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Pay Vendors Card */}
-        <Card
-          className="
-      bg-gradient-to-br from-purple-600 to-purple-800
-      p-8 rounded-3xl shadow-lg text-white
-      w-full md:w-[600px]      /* full width on mobile, 600px at md+ */
-      h-auto md:h-[500px]      /* auto height on mobile, 500px at md+ */
-      pt-[10px]
-      flex flex-col justify-center items-center
-    "
-        >
-          <CardContent className="p-0">
-            <div className="flex flex-col gap-3.5">
-              <div className="relative mt-12 flex justify-center items-center">
-                <CurrencyConverter />
-              </div>
-              <div className="mt-[70px]">
-                <h3 className="text-2xl font-bold mb-4">
-                  Pay vendors abroad at great FX rates
-                </h3>
-                <p className="text-white/80">
-                  We help you pay your vendors abroad using naira, with some of
-                  the best FX rates around, via our licensed partners.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </section>
   );

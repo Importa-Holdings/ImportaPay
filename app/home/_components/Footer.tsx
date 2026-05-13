@@ -19,7 +19,7 @@ const Footer = () => {
           </div>
 
           {/* Contact Information */}
-          <div className="text-left md:text-left mt-10">
+          <div className="text-left md:text-left mt-10 flex justify-between items-center">
             <div className="space-y-4 flex-row md:flex  gap-10">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -36,6 +36,28 @@ const Footer = () => {
                 </h3>
                 <p className="text-gray-600">Hello@importa.biz</p>
               </div>
+            </div>
+
+            {/* Legal Links */}
+            <div className="flex space-x-6">
+              <a
+                href="https://importapay.gitbook.io/importapay-t-and-c/global-aml-policy"
+                className="text-gray-600 hover:text-gray-900 text-sm transition-colors duration-200"
+              >
+                AML policy
+              </a>
+              <a
+                href="https://importapay.gitbook.io/importapay-t-and-c/privacy-policy"
+                className="text-gray-600 hover:text-gray-900 text-sm transition-colors duration-200"
+              >
+                Privacy policy
+              </a>
+              <a
+                href="https://importapay.gitbook.io/importapay-t-and-c/"
+                className="text-gray-600 hover:text-gray-900 text-sm transition-colors duration-200"
+              >
+                Terms of use
+              </a>
             </div>
           </div>
 
@@ -73,7 +95,19 @@ const Footer = () => {
             </div>
           </div>
         </div>
-
+        {/* Banking Information */}
+        <div className="mt-8 text-center">
+          <p className="text-gray-600 text-sm max-w-4xl mx-auto leading-relaxed">
+            ImportaPay is a product of Importa Holdings Company LTD, and Importa
+            General Merchant Limited, collectively referred to as "Importa".
+            ImportaPay is not a bank, but a financial technology platform.
+          </p>
+          <p className="text-gray-600 text-sm max-w-4xl mx-auto mt-3 leading-relaxed">
+            Banking and financial services offered on ImportaPay are provided by
+            one or more financial and banking partners across every jurisdiction
+            where we provide our services.
+          </p>
+        </div>
         {/* Divider */}
         <div className="border-t border-gray-200 pt-8">
           <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
@@ -84,38 +118,6 @@ const Footer = () => {
                 Company Number 16317892 ). All right reserved.
               </p>
             </div>
-
-            {/* Legal Links */}
-            <div className="flex space-x-6">
-              <a
-                href="https://importapay.gitbook.io/importapay-t-and-c/global-aml-policy"
-                className="text-gray-600 hover:text-gray-900 text-sm transition-colors duration-200"
-              >
-                AML policy
-              </a>
-              <a
-                href="https://importapay.gitbook.io/importapay-t-and-c/privacy-policy"
-                className="text-gray-600 hover:text-gray-900 text-sm transition-colors duration-200"
-              >
-                Privacy policy
-              </a>
-              <a
-                href="https://importapay.gitbook.io/importapay-t-and-c/"
-                className="text-gray-600 hover:text-gray-900 text-sm transition-colors duration-200"
-              >
-                Terms of use
-              </a>
-            </div>
-          </div>
-
-          {/* Banking Information */}
-          <div className="mt-8 text-center">
-            <p className="text-gray-600 text-sm max-w-4xl mx-auto leading-relaxed">
-              Importapay® is not a bank. Our banking services is provided by{" "}
-              <span className="font-semibold">9 payment service Bank</span>,
-              licensed by the Central Bank of Nigeria. All deposits are insured
-              by the Nigerian Deposit Insurance Corporation ( NDIC ).
-            </p>
           </div>
         </div>
       </div>

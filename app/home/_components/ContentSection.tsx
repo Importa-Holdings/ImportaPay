@@ -33,7 +33,7 @@ const ContentSection = () => {
           "
         >
           <h2 className="text-2xl lg:text-4xl font-bold text-white">
-            Make Your First 5 <br /> Transactions For Free
+            Free to use, no hidden fees, and no need for a dollar account.
           </h2>
           <p className="md:text-xl text-sm text-white/80 leading-relaxed max-w-lg mx-auto md:mx-0">
             Join thousands of businesses who trust us to handle their

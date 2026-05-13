@@ -18,6 +18,25 @@ const variants = {
   exit: { x: -500, opacity: 0, transition: { duration: 0.5 } },
 };
 
+const bankingPartners = [
+  {
+    name: "Blockradar",
+    logo: "/image/blockradar-icon.svg",
+  },
+  {
+    name: "Monirate",
+    logo: "/image/monirate.jpg",
+  },
+  {
+    name: "FlexBudge",
+    logo: "/image/flexbudge.jpg",
+  },
+  {
+    name: "Aella",
+    logo: "/image/aella.png",
+  },
+];
+
 const Safe = () => {
   const [showFirst, setShowFirst] = useState(true);
 
@@ -52,16 +71,29 @@ const Safe = () => {
             variants={variants}
           >
             <h1 className="font-sans font-bold text-3xl sm:text-4xl md:text-[50px] text-white leading-tight">
-              Trusted & Secured By <br /> Our Licensed Banking <br /> Partner
+              Trusted by industry leaders
             </h1>
-            <p className="font-sans mt-4 text-white/90 text-[15px]">
-              <span className="font-semibold text-white">Importapay</span> is in
-              partnership with{" "}
-              <span className="font-semibold text-white">
-                9 Payment Service Bank
-              </span>
-              . Your account is safe and <br /> regulated.
-            </p>
+            <div className="mt-8 grid w-full max-w-4xl grid-cols-2 gap-3 px-2 sm:grid-cols-4 sm:gap-4">
+              {bankingPartners.map((partner) => (
+                <div
+                  key={partner.name}
+                  className="flex min-h-32 flex-col items-center justify-center rounded-xl bg-white/95 p-4 text-[#2B123D] shadow-md"
+                >
+                  <div className="relative h-14 w-full">
+                    <Image
+                      src={partner.logo}
+                      alt={`${partner.name} logo`}
+                      fill
+                      sizes="(max-width: 640px) 45vw, 180px"
+                      className="object-contain"
+                    />
+                  </div>
+                  <p className="mt-3 text-sm font-semibold sm:text-base">
+                    {partner.name}
+                  </p>
+                </div>
+              ))}
+            </div>
           </motion.div>
         ) : (
           <motion.div

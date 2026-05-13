@@ -11,10 +11,16 @@ interface ExchangeRates {
   [key: string]: string | undefined;
 }
 
+const DEMO_RATES: ExchangeRates = {
+  rate_dollar: "1600",
+  amount_in_naira: "1600",
+  markedup_amount_in_naira: "1600",
+  usdc_buy_rate: "1600",
+};
+
 const useExchangeRates = () => {
   const [rates, setRates] = useState<ExchangeRates | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRates = async () => {
@@ -43,28 +49,20 @@ const useExchangeRates = () => {
           combinedRates.markedup_amount_in_naira =
             usdData.response.markedup_amount_in_naira;
         } else {
-          setError(usdData.message || "Failed to fetch USD rate");
+          setRates(DEMO_RATES);
           return;
         }
 
         if (usdcData.message === "successfully fetched rate") {
           combinedRates.usdc_buy_rate = usdcData.response.buy.toString();
         } else {
-          setError("Failed to fetch USDC rate");
+          setRates(DEMO_RATES);
           return;
         }
 
         setRates(combinedRates);
-      } catch (err: unknown) {
-        let errorMessage = "Failed to fetch exchange rates";
-
-        if (err instanceof Error) {
-          errorMessage = err.message;
-        } else if (typeof err === "string") {
-          errorMessage = err;
-        }
-
-        setError(errorMessage);
+      } catch {
+        setRates(DEMO_RATES);
       } finally {
         setLoading(false);
       }
@@ -73,13 +71,13 @@ const useExchangeRates = () => {
     fetchRates();
   }, []);
 
-  return { rates, loading, error };
+  return { rates, loading };
 };
 
 const CurrencyConverter = () => {
-  const { rates, loading, error } = useExchangeRates();
-  const [topAmount, setTopAmount] = useState("0");
-  const [bottomAmount, setBottomAmount] = useState("0");
+  const { rates, loading } = useExchangeRates();
+  const [topAmount, setTopAmount] = useState("1250000");
+  const [bottomAmount, setBottomAmount] = useState("781.25");
   const [topCurrency, setTopCurrency] = useState("NGN");
   const [bottomCurrency, setBottomCurrency] = useState("USD");
 
@@ -144,6 +142,13 @@ const CurrencyConverter = () => {
     return amount;
   };
 
+  useEffect(() => {
+    if (!rates) return;
+
+    const converted = convertCurrency(topAmount, topCurrency, bottomCurrency);
+    setBottomAmount(converted);
+  }, [rates]);
+
   const handleTopAmountChange = (value: string) => {
     setTopAmount(value);
     if (rates) {
@@ -176,18 +181,40 @@ const CurrencyConverter = () => {
     return currencies.find((c) => c.code === code)?.flag || "🏳️";
   };
 
+  const getRateText = () => {
+    const usdRate = parseFloat(
+      rates?.markedup_amount_in_naira || rates?.amount_in_naira || "1600",
+    );
+
+    if (
+      (topCurrency === "NGN" && bottomCurrency === "USD") ||
+      (topCurrency === "USD" && bottomCurrency === "NGN")
+    ) {
+      return `Rate: 1 USD = NGN ${usdRate.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+    }
+
+    const usdcRate = parseFloat(rates?.usdc_buy_rate || "1600");
+
+    if (
+      (topCurrency === "NGN" && bottomCurrency === "USDC") ||
+      (topCurrency === "USDC" && bottomCurrency === "NGN")
+    ) {
+      return `Rate: 1 USDC = NGN ${usdcRate.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+    }
+
+    return "Rate: 1 USD = 1 USDC";
+  };
+
   if (loading) {
     return (
       <div className="w-full flex items-center justify-center py-8">
         <div className="text-lg text-white/80">Loading rates...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="w-full flex items-center justify-center py-8">
-        <div className="text-lg text-red-300">Error: {error}</div>
       </div>
     );
   }
@@ -283,12 +310,12 @@ const CurrencyConverter = () => {
       </div>
 
       {/* Exchange Rate Info */}
-      {/* <div className="text-center text-white/70 text-xs sm:text-sm">
-        <p>
-          1 {topCurrency} = {convertCurrency("1", topCurrency, bottomCurrency)}{" "}
-          {bottomCurrency}
+      <div className="text-center text-white/80 text-xs sm:text-sm">
+        <p>{getRateText()}</p>
+        <p className="mt-1">
+          Sample conversion: NGN 1,250,000 = USD 781.25
         </p>
-      </div> */}
+      </div>
     </div>
   );
 };
