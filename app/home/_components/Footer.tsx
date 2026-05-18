@@ -99,7 +99,7 @@ const Footer = () => {
         <div className="mt-8 text-center">
           <p className="text-gray-600 text-sm max-w-4xl mx-auto leading-relaxed">
             ImportaPay is a product of Importa Holdings Company LTD, and Importa
-            General Merchant Limited, collectively referred to as "Importa".
+            General Merchant Limited, collectively referred to as &quot;Importa&quot;.
             ImportaPay is not a bank, but a financial technology platform.
           </p>
           <p className="text-gray-600 text-sm max-w-4xl mx-auto mt-3 leading-relaxed">
