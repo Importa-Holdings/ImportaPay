@@ -1,6 +1,5 @@
 import LandingPage from "./home/_components/LandingPage";
 import RateTicker from "./home/_components/RateTicker";
-import CrossBoder from "./home/_components/crossBoder";
 import ImageModal from "./home/_components/ImageModal";
 import Business from "./home/_components/Business";
 import Safe from "./home/_components/Safe";

@@ -41,25 +41,6 @@ const transactions = [
   },
 ];
 
-function Eyebrow({
-  children,
-  dark = false,
-}: {
-  children: React.ReactNode;
-  dark?: boolean;
-}) {
-  return (
-    <span
-      className={`inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] ${dark ? "text-white/55" : "text-slate-500"}`}
-    >
-      <span
-        className={`h-1.5 w-1.5 rounded-full ${dark ? "bg-purple-300" : "bg-purple-600"}`}
-      />
-      {children}
-    </span>
-  );
-}
-
 function IconTile({
   children,
   inverse = false,

@@ -7,8 +7,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import CurrencyConverter from "./CurrencyConverter";
 
-import CoreOfferings from "./CoreOfferings";
-
 const CrossBorder = () => {
   return (
     <div className="bg-white flex flex-col justify-center items-center mt-14 p-0 md:p-6">
