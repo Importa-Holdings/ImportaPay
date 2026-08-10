@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
-
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 const Join = () => {
   return (
     <section
@@ -34,40 +34,29 @@ const Join = () => {
           </p>
 
           {/* Download Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 pt-6 justify-center">
-            <Button
-              size="lg"
-              className="
-                bg-white text-black border-white/30 hover:bg-white/30 backdrop-blur-sm
-                transition-all duration-300 hover:scale-105
-                flex items-center gap-3 p-6 text-lg w-full sm:w-auto justify-center
-              "
-            >
-              <Image
-                src="/image/Apple.png"
-                alt="Apple"
-                width={25}
-                height={25}
-              />
-              Download for iOS
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="
-                bg-white text-black border-white/30 hover:bg-white/30 backdrop-blur-sm
-                transition-all duration-300 hover:scale-105
-                flex items-center gap-3 p-6 text-lg w-full sm:w-auto justify-center
-              "
-            >
-              <Image
-                src="/image/PlayStore.png"
-                alt="Playstore"
-                width={25}
-                height={25}
-              />
-              Download for Android
-            </Button>
+          <div className="flex flex-col items-center sm:flex-row justify-center gap-4 md:pt-6 pt-35">
+            <Link href="https://merchant.importa.biz">
+              <Button
+                size="lg"
+                className="bg-white text-black border-white/30 hover:bg-white/30 backdrop-blur-sm
+                           transition-all duration-300 hover:scale-105
+                           flex items-center gap-2 sm:gap-3 px-4 py-3 sm:px-6 sm:py-4 text-base sm:text-lg"
+              >
+                Get started
+              </Button>
+            </Link>
+            <Link href="https://calendly.com/dgsoetan/30min">
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-white text-black border-white/30 hover:bg-white/20 backdrop-blur-sm
+                           transition-all duration-300 hover:scale-105
+                           flex items-center gap-2 sm:gap-3 px-4 py-3 sm:px-6 sm:py-4 text-base sm:text-lg"
+              >
+                Speak to Sales
+                <ArrowRight size={20} className="text-black" />
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

@@ -118,19 +118,19 @@ export default function Categories() {
   );
 
   return (
-    <div className="min-h-screen bg-white m-0 md:m-24">
+    <div className="bg-white m-0 md:m-24">
       {/* Header with purple accent */}
       <div className="bg-white">
         <div className="max-w-7xl mx-auto px-4 py-6">
           {/* Navigation Tabs and Search */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             {/* Tabs */}
-            <div className="flex space-x-8">
+            <div className="-mx-4 flex gap-6 overflow-x-auto px-4 sm:mx-0 sm:px-0 lg:overflow-visible">
               {tabs.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`pb-2 text-sm font-medium transition-colors duration-200 ${
+                  className={`shrink-0 whitespace-nowrap pb-2 text-sm font-medium transition-colors duration-200 ${
                     activeTab === tab
                       ? "text-purple-600 border-b-2 border-purple-600"
                       : "text-gray-500 hover:text-gray-700"
