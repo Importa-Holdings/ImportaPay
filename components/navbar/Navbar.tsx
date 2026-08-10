@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { Menu, X, ChevronDown, Apple, Smartphone } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,7 +11,6 @@ import { useAuthStore } from "@/lib/store/authStore";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDownloadDropdownOpen, setIsDownloadDropdownOpen] = useState(false);
   const pathname = usePathname();
   const { logout } = useLogout();
   const { user, isLoading } = useUser();
@@ -106,46 +105,14 @@ export const Navbar = () => {
                     </Button>
                   </>
                 ) : (
-                  <div className="relative">
-                    <Link href="https://merchant.importa.biz">
-                      <Button
-                        variant="secondary"
-                        className="bg-[#6A0DAD] text-white hover:text-[#6A0DAD] hover:bg-white/30 backdrop-blur-sm cursor-pointer flex items-center gap-1"
-                      >
-                        Get started
-                      </Button>
-                    </Link>
-                    {isDownloadDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                        <div
-                          className="py-1"
-                          role="menu"
-                          aria-orientation="vertical"
-                        >
-                          <a
-                            href="https://apps.apple.com/app/id6752268757"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:text-[#6A0DAD] hover:bg-gray-100"
-                            role="menuitem"
-                          >
-                            <Apple className="w-4 h-4 mr-2 text-gray-500" />
-                            Download for iOS
-                          </a>
-                          <a
-                            href="https://play.google.com/store/apps/details?id=com.importapay"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:text-[#6A0DAD] hover:bg-gray-100"
-                            role="menuitem"
-                          >
-                            <Smartphone className="w-4 h-4 mr-2 text-gray-500" />
-                            Download for Android
-                          </a>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  <Link href="https://merchant.importa.biz">
+                    <Button
+                      variant="secondary"
+                      className="bg-[#6A0DAD] text-white hover:text-[#6A0DAD] hover:bg-white/30 backdrop-blur-sm cursor-pointer"
+                    >
+                      Get started
+                    </Button>
+                  </Link>
                 )}
               </>
             )}
@@ -260,28 +227,13 @@ export const Navbar = () => {
                       </Button>
                     </>
                   ) : (
-                    <>
-                      <a
-                        href="https://apps.apple.com/app/id6752268757"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 w-full bg-[#6A0DAD] text-white hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-md transition-colors duration-200"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <Apple className="w-4 h-4" />
-                        Download for iOS
-                      </a>
-                      <a
-                        href="https://play.google.com/store/apps/details?id=com.importapay"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 w-full bg-[#6A0DAD] text-white hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-md transition-colors duration-200"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <Smartphone className="w-4 h-4" />
-                        Download for Android
-                      </a>
-                    </>
+                    <Link
+                      href="https://merchant.importa.biz"
+                      className="flex items-center justify-center w-full bg-[#6A0DAD] text-white hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-md transition-colors duration-200"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Get started
+                    </Link>
                   )}
                 </div>
               </>
