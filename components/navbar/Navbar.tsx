@@ -50,20 +50,21 @@ export const Navbar = () => {
                 </span>
                 <span className="text-white">
                   <Link
-                    href="/blog"
-                    className="text-white transition-colors duration-200"
-                  >
-                    Blog
-                  </Link>
-                </span>
-                <span className="text-white">
-                  <Link
                     href="/corridors"
                     className="text-white transition-colors duration-200"
                   >
                     Corridors
                   </Link>
                 </span>
+                <span className="text-white">
+                  <Link
+                    href="/blog"
+                    className="text-white transition-colors duration-200"
+                  >
+                    Blog
+                  </Link>
+                </span>
+
                 <Button
                   onClick={logout}
                   variant="secondary"
@@ -138,20 +139,21 @@ export const Navbar = () => {
                 <div className="space-y-2">
                   <Button className="w-full bg-red-600 text-white hover:bg-red-700 backdrop-blur-sm">
                     <Link
-                      href="/blog"
-                      className="text-white transition-colors duration-200"
-                    >
-                      Blog
-                    </Link>
-                  </Button>
-                  <Button className="w-full bg-red-600 text-white hover:bg-red-700 backdrop-blur-sm">
-                    <Link
                       href="/corridors"
                       className="text-white transition-colors duration-200"
                     >
                       Corridors
                     </Link>
                   </Button>
+                  <Button className="w-full bg-red-600 text-white hover:bg-red-700 backdrop-blur-sm">
+                    <Link
+                      href="/blog"
+                      className="text-white transition-colors duration-200"
+                    >
+                      Blog
+                    </Link>
+                  </Button>
+
                   <Button className="w-full bg-red-600 text-white hover:bg-red-700 backdrop-blur-sm">
                     <Link
                       href="/dashboard"
@@ -183,19 +185,20 @@ export const Navbar = () => {
                   Home
                 </Link>
                 <Link
-                  href="/blog"
-                  className="block px-3 py-2 text-white hover:text-white transition-colors duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Blog
-                </Link>
-                <Link
                   href="/corridors"
                   className="block px-3 py-2 text-white hover:text-white transition-colors duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Corridors
                 </Link>
+                <Link
+                  href="/blog"
+                  className="block px-3 py-2 text-white hover:text-white transition-colors duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Blog
+                </Link>
+
                 <div className="space-y-3 px-3 pt-2">
                   {isDashboard ? (
                     <>

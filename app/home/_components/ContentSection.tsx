@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -39,44 +40,28 @@ const ContentSection = () => {
             Join thousands of businesses who trust us to handle their
             international payments seamlessly and securely.
           </p>
-
-          {/* Download Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 pt-6 justify-center md:justify-start">
-            <Link href="https://apps.apple.com/app/id6752268757">
+          {/* Buttons */} {/* Download Buttons */}
+          <div className="flex flex-col items-center sm:items-start sm:flex-row gap-4 md:pt-6 pt-35">
+            <Link href="https://merchant.importa.biz">
               <Button
                 size="lg"
-                className="
-                bg-white text-black border-white/30 hover:bg-white/30 backdrop-blur-sm
-                transition-all duration-300 hover:scale-105
-                flex items-center gap-3 px-6 py-4 text-lg
-              "
+                className="bg-white text-black border-white/30 hover:bg-white/30 backdrop-blur-sm
+                           transition-all duration-300 hover:scale-105
+                           flex items-center gap-2 sm:gap-3 px-4 py-3 sm:px-6 sm:py-4 text-base sm:text-lg"
               >
-                <Image
-                  src="/image/Apple.png"
-                  alt="Apple"
-                  width={25}
-                  height={25}
-                />
-                Download for iOS
+                Get started
               </Button>
             </Link>
-            <Link href="https://play.google.com/store/apps/details?id=com.importapay">
+            <Link href="https://calendly.com/dgsoetan/30min">
               <Button
                 size="lg"
                 variant="outline"
-                className="
-                bg-white text-black border-white/30 hover:bg-white/20 backdrop-blur-sm
-                transition-all duration-300 hover:scale-105
-                flex items-center gap-3 px-6 py-4 text-lg
-              "
+                className="bg-white text-black border-white/30 hover:bg-white/20 backdrop-blur-sm
+                           transition-all duration-300 hover:scale-105
+                           flex items-center gap-2 sm:gap-3 px-4 py-3 sm:px-6 sm:py-4 text-base sm:text-lg"
               >
-                <Image
-                  src="/image/PlayStore.png"
-                  alt="Playstore"
-                  width={25}
-                  height={25}
-                />
-                Download for Android
+                Speak to Sales
+                <ArrowRight size={20} className="text-black" />
               </Button>
             </Link>
           </div>

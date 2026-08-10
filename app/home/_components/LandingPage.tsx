@@ -77,7 +77,7 @@ const LandingPage = () => {
               partners.
             </p>
 
-            {/* Download Buttons */}
+            {/*  Buttons */}
             <div className="flex flex-col items-center sm:items-start sm:flex-row gap-4 md:pt-6 pt-35">
               <Link href="https://merchant.importa.biz">
                 <Button
