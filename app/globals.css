@@ -4,3 +4,16 @@
 :root {
   --font-sfpro: "SF Pro Display", system-ui, sans-serif;
 }
+
+@keyframes rate-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-rate-marquee {
+  animation: rate-marquee 22s linear infinite;
+}

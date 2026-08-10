@@ -1,6 +1,6 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Navbar } from "@/components/navbar/Navbar";
@@ -79,24 +79,17 @@ const LandingPage = () => {
 
             {/* Download Buttons */}
             <div className="flex flex-col items-center sm:items-start sm:flex-row gap-4 md:pt-6 pt-35">
-              <Link href="https://apps.apple.com/app/id6752268757">
+              <Link href="https://merchant.importa.biz">
                 <Button
                   size="lg"
                   className="bg-white text-black border-white/30 hover:bg-white/30 backdrop-blur-sm
                            transition-all duration-300 hover:scale-105
                            flex items-center gap-2 sm:gap-3 px-4 py-3 sm:px-6 sm:py-4 text-base sm:text-lg"
                 >
-                  <Image
-                    src="/image/Apple.png"
-                    alt="Apple"
-                    height={50}
-                    width={50}
-                    className="w-5 h-5 sm:w-6 sm:h-6"
-                  />
-                  Download for iOS
+                  Get started
                 </Button>
               </Link>
-              <Link href="https://play.google.com/store/apps/details?id=com.importapay">
+              <Link href="https://calendly.com/dgsoetan/30min">
                 <Button
                   size="lg"
                   variant="outline"
@@ -104,14 +97,8 @@ const LandingPage = () => {
                            transition-all duration-300 hover:scale-105
                            flex items-center gap-2 sm:gap-3 px-4 py-3 sm:px-6 sm:py-4 text-base sm:text-lg"
                 >
-                  <Image
-                    src="/image/PlayStore.png"
-                    alt="playstore"
-                    height={50}
-                    width={50}
-                    className="w-5 h-5 sm:w-6 sm:h-6"
-                  />
-                  Download for Android
+                  Speak to Sales
+                  <ArrowRight size={20} className="text-black" />
                 </Button>
               </Link>
             </div>

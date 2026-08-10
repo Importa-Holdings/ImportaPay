@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 24">
+  <defs>
+    <clipPath id="keClip"><rect width="36" height="24" rx="3"/></clipPath>
+  </defs>
+  <g clip-path="url(#keClip)">
+    <rect width="36" height="24" fill="#fff"/>
+    <rect width="36" height="7" fill="#000"/>
+    <rect y="7" width="36" height="1.4" fill="#fff"/>
+    <rect y="8.4" width="36" height="7.2" fill="#bb0000"/>
+    <rect y="15.6" width="36" height="1.4" fill="#fff"/>
+    <rect y="17" width="36" height="7" fill="#006600"/>
+    <g transform="translate(18,12)">
+      <path d="M-3.4,-6.2 L3.4,-6.2 L3.4,2.6 Q0,7.4 0,7.4 Q0,7.4 -3.4,2.6 Z" fill="#bb0000" stroke="#000" stroke-width="0.4"/>
+      <path d="M-1.9,-4.4 L1.9,-4.4 L1.9,2 Q0,5 0,5 Q0,5 -1.9,2 Z" fill="#fff"/>
+      <path d="M-1.9,-4.4 L1.9,-4.4 L1.9,2 Q0,5 0,5 Q0,5 -1.9,2 Z" fill="none" stroke="#000" stroke-width="0.3"/>
+    </g>
+  </g>
+</svg>

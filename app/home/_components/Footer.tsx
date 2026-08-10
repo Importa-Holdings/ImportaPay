@@ -17,10 +17,9 @@ const Footer = () => {
               />
             </div>
           </div>
-
           {/* Contact Information */}
-          <div className="text-left md:text-left mt-10 flex justify-between items-center">
-            <div className="space-y-4 flex-row md:flex  gap-10">
+          <div className="mt-10 flex flex-col gap-8 text-left lg:flex-row lg:items-start lg:justify-between">
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   Contact number
@@ -36,10 +35,34 @@ const Footer = () => {
                 </h3>
                 <p className="text-gray-600">Hello@importa.biz</p>
               </div>
+              <div>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">
+                  United Kingdom
+                </h3>
+                <address className="text-gray-600 not-italic leading-relaxed">
+                  82A James Carter Road
+                  <br />
+                  Mildenhall
+                  <br />
+                  United Kingdom IP28 7DE
+                </address>
+              </div>
+              <div>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">
+                  Nigeria
+                </h3>
+                <address className="text-gray-600 not-italic leading-relaxed">
+                  Shop B88B Up, Alaba International Market
+                  <br />
+                  Ojo LGA, Lagos
+                  <br />
+                  Nigeria
+                </address>
+              </div>
             </div>
 
             {/* Legal Links */}
-            <div className="flex space-x-6">
+            <div className="flex flex-wrap gap-x-6 gap-y-3 lg:justify-end">
               <a
                 href="https://importapay.gitbook.io/importapay-t-and-c/global-aml-policy"
                 className="text-gray-600 hover:text-gray-900 text-sm transition-colors duration-200"
@@ -99,8 +122,9 @@ const Footer = () => {
         <div className="mt-8 text-center">
           <p className="text-gray-600 text-sm max-w-4xl mx-auto leading-relaxed">
             ImportaPay is a product of Importa Holdings Company LTD, and Importa
-            General Merchant Limited, collectively referred to as &quot;Importa&quot;.
-            ImportaPay is not a bank, but a financial technology platform.
+            General Merchant Limited, collectively referred to as
+            &quot;Importa&quot;. ImportaPay is not a bank, but a financial
+            technology platform.
           </p>
           <p className="text-gray-600 text-sm max-w-4xl mx-auto mt-3 leading-relaxed">
             Banking and financial services offered on ImportaPay are provided by

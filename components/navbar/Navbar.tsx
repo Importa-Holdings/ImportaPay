@@ -57,6 +57,14 @@ export const Navbar = () => {
                     Blog
                   </Link>
                 </span>
+                <span className="text-white">
+                  <Link
+                    href="/corridors"
+                    className="text-white transition-colors duration-200"
+                  >
+                    Corridors
+                  </Link>
+                </span>
                 <Button
                   onClick={logout}
                   variant="secondary"
@@ -75,11 +83,18 @@ export const Navbar = () => {
                   Home
                 </Link>
                 <Link
+                  href="/corridors"
+                  className="text-black hover:text-[#6A0DAD] transition-colors duration-200"
+                >
+                  Corridors
+                </Link>
+                <Link
                   href="/blog"
                   className="text-black hover:text-[#6A0DAD] transition-colors duration-200"
                 >
                   Blog
                 </Link>
+
                 {isDashboard ? (
                   <>
                     <Button
@@ -92,20 +107,14 @@ export const Navbar = () => {
                   </>
                 ) : (
                   <div className="relative">
-                    <Button
-                      variant="secondary"
-                      className="bg-[#6A0DAD] text-white hover:text-[#6A0DAD] hover:bg-white/30 backdrop-blur-sm cursor-pointer flex items-center gap-1"
-                      onClick={() =>
-                        setIsDownloadDropdownOpen(!isDownloadDropdownOpen)
-                      }
-                    >
-                      Download app
-                      <ChevronDown
-                        className={`w-4 h-4 transition-transform ${
-                          isDownloadDropdownOpen ? "transform rotate-180" : ""
-                        }`}
-                      />
-                    </Button>
+                    <Link href="https://merchant.importa.biz">
+                      <Button
+                        variant="secondary"
+                        className="bg-[#6A0DAD] text-white hover:text-[#6A0DAD] hover:bg-white/30 backdrop-blur-sm cursor-pointer flex items-center gap-1"
+                      >
+                        Get started
+                      </Button>
+                    </Link>
                     {isDownloadDropdownOpen && (
                       <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                         <div
@@ -153,7 +162,6 @@ export const Navbar = () => {
           </div>
         </div>
       </div>
-
       {/* Mobile Navigation */}
       {isMenuOpen && (
         <div className="md:hidden backdrop-blur-md bg-[#6A0DAD]/10 border-t border-white/20">
@@ -167,6 +175,14 @@ export const Navbar = () => {
                       className="text-white transition-colors duration-200"
                     >
                       Blog
+                    </Link>
+                  </Button>
+                  <Button className="w-full bg-red-600 text-white hover:bg-red-700 backdrop-blur-sm">
+                    <Link
+                      href="/corridors"
+                      className="text-white transition-colors duration-200"
+                    >
+                      Corridors
                     </Link>
                   </Button>
                   <Button className="w-full bg-red-600 text-white hover:bg-red-700 backdrop-blur-sm">
@@ -205,6 +221,13 @@ export const Navbar = () => {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Blog
+                </Link>
+                <Link
+                  href="/corridors"
+                  className="block px-3 py-2 text-white hover:text-white transition-colors duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Corridors
                 </Link>
                 <div className="space-y-3 px-3 pt-2">
                   {isDashboard ? (
