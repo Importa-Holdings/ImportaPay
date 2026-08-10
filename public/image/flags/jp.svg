@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 24">
+  <defs>
+    <clipPath id="jpClip"><rect width="36" height="24" rx="3"/></clipPath>
+  </defs>
+  <g clip-path="url(#jpClip)">
+    <rect width="36" height="24" fill="#fff"/>
+    <circle cx="18" cy="12" r="6.4" fill="#bc002d"/>
+  </g>
+</svg>

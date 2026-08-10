@@ -24,7 +24,7 @@ const Footer = () => {
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   Contact number
                 </h3>
-                <div className="space-y-1 flex-row md:flex gap-1 md:gap-7">
+                <div className="space-y-1 flex-col md:flex  gap-1 md:gap-7">
                   <p className="text-gray-600">+2347087780540</p>
                   <p className="text-gray-600">+447446125288</p>
                 </div>

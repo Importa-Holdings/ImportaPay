@@ -53,9 +53,28 @@ const sendingCurrencies = [
   { code: "USDC", name: "USD Coin", flag: "/image/flags/usdc.svg" },
 ];
 
-const receiverFlags: Record<string, string> = {
-  USD: "/image/flags/us.svg",
+type CurrencyMeta = { name: string; country: string; flag: string };
+
+const currencyMeta: Record<string, CurrencyMeta> = {
+  USD: { name: "US Dollar", country: "United States", flag: "/image/flags/us.svg" },
+  EUR: { name: "Euro", country: "Eurozone", flag: "/image/flags/eu.svg" },
+  GBP: { name: "British Pound", country: "United Kingdom", flag: "/image/flags/gb.svg" },
+  AED: { name: "UAE Dirham", country: "United Arab Emirates", flag: "/image/flags/ae.svg" },
+  BRL: { name: "Brazilian Real", country: "Brazil", flag: "/image/flags/br.svg" },
+  CAD: { name: "Canadian Dollar", country: "Canada", flag: "/image/flags/ca.svg" },
+  CNY: { name: "Chinese Yuan", country: "China", flag: "/image/flags/cn.svg" },
+  COP: { name: "Colombian Peso", country: "Colombia", flag: "/image/flags/co.svg" },
+  HKD: { name: "Hong Kong Dollar", country: "Hong Kong", flag: "/image/flags/hk.svg" },
+  JPY: { name: "Japanese Yen", country: "Japan", flag: "/image/flags/jp.svg" },
+  MXN: { name: "Mexican Peso", country: "Mexico", flag: "/image/flags/mx.svg" },
+  NGN: { name: "Nigerian Naira", country: "Nigeria", flag: "/image/flags/ng.svg" },
+  PHP: { name: "Philippine Peso", country: "Philippines", flag: "/image/flags/ph.svg" },
+  SGD: { name: "Singapore Dollar", country: "Singapore", flag: "/image/flags/sg.svg" },
+  ZAR: { name: "South African Rand", country: "South Africa", flag: "/image/flags/za.svg" },
 };
+
+const getCurrencyMeta = (code: string): CurrencyMeta =>
+  currencyMeta[code] ?? { name: code, country: "", flag: "/image/flags/global.svg" };
 
 const getSendingFlag = (code: string) =>
   sendingCurrencies.find((currency) => currency.code === code)?.flag ??
@@ -108,17 +127,25 @@ const CurrencyConverter = () => {
 
       if (!Array.isArray(countries)) return;
 
-      const currencies = countries.flatMap((country: CorridorCountry) =>
-        (country.currencies ?? []).map((currency) => ({
-          code: currency.currencyCode,
-          name: currency.currencyCode,
-          countryCode: country.countryCode,
-          countryName: country.countryName,
-          symbol: currency.currencySymbol,
-          minAmount: currency.destinationAmount?.min,
-          maxAmount: currency.destinationAmount?.max,
-        })),
-      );
+      const seenCurrencyCodes = new Set<string>();
+      const currencies: CurrencyOption[] = [];
+
+      for (const country of countries as CorridorCountry[]) {
+        for (const currency of country.currencies ?? []) {
+          if (seenCurrencyCodes.has(currency.currencyCode)) continue;
+          seenCurrencyCodes.add(currency.currencyCode);
+
+          currencies.push({
+            code: currency.currencyCode,
+            name: currency.currencyCode,
+            countryCode: country.countryCode,
+            countryName: country.countryName,
+            symbol: currency.currencySymbol,
+            minAmount: currency.destinationAmount?.min,
+            maxAmount: currency.destinationAmount?.max,
+          });
+        }
+      }
 
       if (currencies.length > 0) {
         setReceiverCurrencies(currencies);
@@ -142,6 +169,7 @@ const CurrencyConverter = () => {
 
     const destinationAmount = Number(amount);
     const minimumAmount = selectedReceiverCurrency?.minAmount ?? 5000;
+    const maximumAmount = selectedReceiverCurrency?.maxAmount;
 
     if (!destinationAmount || destinationAmount <= 0) {
       setError("Enter the amount the receiver should get.");
@@ -150,7 +178,14 @@ const CurrencyConverter = () => {
 
     if (destinationAmount < minimumAmount) {
       setError(
-        `Minimum amount is ${minimumAmount.toLocaleString()} ${receiverCurrency}.`,
+        `Minimum amount is ${minimumAmount.toLocaleString()} ${receiverCurrency} per transaction.`,
+      );
+      return;
+    }
+
+    if (typeof maximumAmount === "number" && destinationAmount > maximumAmount) {
+      setError(
+        `Maximum amount is ${maximumAmount.toLocaleString()} ${receiverCurrency} per transaction.`,
       );
       return;
     }
@@ -169,7 +204,24 @@ const CurrencyConverter = () => {
         destinationAmount: String(destinationAmount),
       });
       const response = await fetch(`${QUOTE_URL}?${searchParams.toString()}`);
-      const data = await response.json();
+
+      let data: {
+        error?: string;
+        message?: string;
+        response?: {
+          totalAmountToPay?: { amountNgn?: number };
+          fee?: { amountNgn?: number };
+          rate?: { ngnPerDestinationUnit?: number };
+          destinationCurrency?: string;
+        };
+      } | null = null;
+      try {
+        data = await response.json();
+      } catch {
+        throw new Error(
+          "The pricing service is temporarily unavailable. Please try again in a moment.",
+        );
+      }
 
       if (!response.ok) {
         throw new Error(data?.error || data?.message || "Quote unavailable");
@@ -194,8 +246,6 @@ const CurrencyConverter = () => {
       setSubmitting(false);
     }
   };
-
-  const getReceiverFlag = (code: string) => receiverFlags[code] || "/image/flags/usdc.svg";
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -237,7 +287,7 @@ const CurrencyConverter = () => {
               Receiver currency
             </label>
             <div className="relative flex min-h-14 items-center gap-3 rounded-2xl bg-white px-4 text-black">
-              <Image src={getReceiverFlag(receiverCurrency)} alt="" width={24} height={18} className="h-[18px] w-6 rounded-sm object-cover" />
+              <Image src={getCurrencyMeta(receiverCurrency).flag} alt="" width={24} height={18} className="h-[18px] w-6 shrink-0 rounded-sm object-cover" />
               <select
                 id="receiver-currency"
                 value={receiverCurrency}
@@ -251,12 +301,18 @@ const CurrencyConverter = () => {
               >
                 {receiverCurrencies.map((currency) => (
                   <option key={`${currency.countryCode}-${currency.code}`} value={currency.code}>
-                    {currency.code}
+                    {currency.code} - {getCurrencyMeta(currency.code).name}
                   </option>
                 ))}
               </select>
               <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" aria-hidden="true" />
             </div>
+            <p className="px-1 text-[11px] text-white/60">
+              {getCurrencyMeta(receiverCurrency).name}
+              {getCurrencyMeta(receiverCurrency).country
+                ? ` · ${getCurrencyMeta(receiverCurrency).country}`
+                : ""}
+            </p>
           </div>
 
           <div className="space-y-2">

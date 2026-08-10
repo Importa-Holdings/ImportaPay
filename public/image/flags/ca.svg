@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 24">
+  <defs>
+    <clipPath id="caClip"><rect width="36" height="24" rx="3"/></clipPath>
+  </defs>
+  <g clip-path="url(#caClip)">
+    <rect width="36" height="24" fill="#fff"/>
+    <rect width="9" height="24" fill="#d52b1e"/>
+    <rect x="27" width="9" height="24" fill="#d52b1e"/>
+    <path d="M18 5 L19.4 9.2 L23.6 8 L21.6 11.6 L24.8 13.6 L20.6 14 L21.2 18.2 L18 15.4 L14.8 18.2 L15.4 14 L11.2 13.6 L14.4 11.6 L12.4 8 L16.6 9.2 Z" fill="#d52b1e"/>
+    <rect x="17" y="15.5" width="2" height="4" fill="#d52b1e"/>
+  </g>
+</svg>
