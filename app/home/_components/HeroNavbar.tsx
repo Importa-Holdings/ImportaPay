@@ -79,12 +79,6 @@ const HeroNavbar = () => {
             ) : (
               <>
                 <Link
-                  href="/login"
-                  className="text-[15px] font-medium text-[#3C3947] transition-colors hover:text-[#5F26A6]"
-                >
-                  Log in
-                </Link>
-                <Link
                   href="https://merchant.importa.biz"
                   className="flex h-[46px] items-center gap-2 rounded-full bg-[#5F26A6] px-6 text-[15px] font-bold text-white transition-colors hover:bg-[#4E1C8C]"
                 >
@@ -136,13 +130,6 @@ const HeroNavbar = () => {
               </button>
             ) : (
               <>
-                <Link
-                  href="/login"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="flex h-[48px] items-center justify-center rounded-full border border-[#5F26A6]/20 text-[16px] font-bold text-[#5F26A6]"
-                >
-                  Log in
-                </Link>
                 <Link
                   href="https://merchant.importa.biz"
                   onClick={() => setIsMenuOpen(false)}
