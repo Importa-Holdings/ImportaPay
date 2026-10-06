@@ -17,74 +17,69 @@ const Subscribe = () => {
   };
 
   return (
-    <div className="mb-10">
+    <section className="bg-white px-4 pt-6 pb-16 font-satoshi sm:px-6 md:pt-10 md:pb-[112px]">
       <Toaster position="top-center" richColors />
-      <div className="bg-[#6A0DAD] flex items-center justify-center p-6 sm:p-8">
-        <div className="w-full max-w-2xl mx-auto">
-          {/* Animated background elements */}
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-white/5 rounded-full blur-xl animate-pulse"></div>
-            <div className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-white/5 rounded-full blur-xl animate-pulse delay-1000"></div>
-            <div className="absolute top-1/2 right-1/3 w-16 h-16 bg-white/5 rounded-full blur-xl animate-pulse delay-500"></div>
+      <div className="mx-auto max-w-[1112px] rounded-[24px] bg-[#F8F6FF] px-6 py-8 md:px-10 md:py-[42px]">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h3 className="text-[22px] font-black tracking-[-0.6px] text-[#17131A] md:text-[26px]">
+              Subscribe to our newsletter
+            </h3>
+            <p className="mt-2 text-[14px] text-[#524E56]">
+              Get the latest updates and news delivered to your inbox.
+            </p>
           </div>
 
-          {/* Main content */}
-          <div className="relative z-10">
-            <form onSubmit={handleSubmit} className="relative z-10">
-              <h3 className="text-2xl font-bold text-white mb-2 text-center sm:text-left">
-                Subscribe to our newsletter
-              </h3>
-              <p className="text-white/80 mb-6 text-center sm:text-left">
-                Get the latest updates and news delivered to your inbox
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 w-full">
-                <div className="relative flex-1">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
-                    disabled={isLoading || isSubscribed}
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={isLoading || isSubscribed}
-                  className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
-                    isSubscribed
-                      ? 'bg-green-500 text-white'
-                      : 'bg-white text-[#6A0DAD] hover:bg-white/90 hover:scale-[1.02] active:scale-95'
-                  } flex items-center justify-center gap-2 min-w-[150px] disabled:opacity-70 disabled:cursor-not-allowed`}
-                >
-                  {isLoading ? (
-                    <>
-                      <span className="w-4 h-4 border-2 border-t-transparent border-[#6A0DAD] rounded-full animate-spin"></span>
-                      Subscribing...
-                    </>
-                  ) : isSubscribed ? (
-                    <>
-                      <Check className="w-5 h-5" />
-                      Subscribed!
-                    </>
-                  ) : (
-                    'Subscribe'
-                  )}
-                </button>
-              </div>
-            </form>
-            {/* Success message */}
-            {isSubscribed && (
-              <div className="mt-4 text-green-300 font-medium animate-fade-in">
-                🎉 Welcome aboard! Check your email for confirmation.
-              </div>
-            )}
-          </div>
+          <form
+            onSubmit={handleSubmit}
+            className="flex w-full flex-col gap-3 sm:flex-row sm:items-center lg:w-auto lg:gap-6"
+          >
+            <label className="relative block w-full lg:w-[320px]">
+              <span className="sr-only">Email address</span>
+              <Mail
+                size={16}
+                className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-[#6B6870]"
+              />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="h-[46px] w-full rounded-full border border-[#EDE8F8] bg-white pr-4 pl-11 text-[14px] text-[#17131A] placeholder:text-[#A09CA6] focus:border-[#6A0DAD]/40 focus:ring-4 focus:ring-[#6A0DAD]/10 focus:outline-none disabled:opacity-60"
+                disabled={isLoading || isSubscribed}
+                required
+              />
+            </label>
+            <button
+              type="submit"
+              disabled={isLoading || isSubscribed}
+              className={`flex h-[46px] shrink-0 items-center justify-center gap-2 rounded-full px-7 text-[14px] font-bold text-white transition-colors disabled:cursor-not-allowed ${
+                isSubscribed ? "bg-[#16A34A]" : "bg-[#6A0DAD] hover:bg-[#5C0DB8] disabled:opacity-70"
+              }`}
+            >
+              {isLoading ? (
+                <>
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Subscribing...
+                </>
+              ) : isSubscribed ? (
+                <>
+                  <Check className="h-4 w-4" />
+                  Subscribed!
+                </>
+              ) : (
+                "Subscribe"
+              )}
+            </button>
+          </form>
         </div>
+        {isSubscribed && (
+          <p className="mt-4 text-[14px] font-medium text-[#16A34A]">
+            Welcome aboard! Check your email for confirmation.
+          </p>
+        )}
       </div>
-    </div>
+    </section>
   );
 };
 

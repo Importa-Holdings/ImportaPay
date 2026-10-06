@@ -13,6 +13,7 @@ interface Post {
     color: string;
   }[];
   content: string;
+  readTime: number;
   imageUrl?: string;
   is_published: boolean;
 }
@@ -69,6 +70,13 @@ export function usePosts() {
           },
         ],
         content: post.content,
+        // ~200 words per minute, ignoring HTML tags
+        readTime: Math.max(
+          1,
+          Math.round(
+            (post.content || "").replace(/<[^>]+>/g, " ").trim().split(/\s+/).length / 200
+          )
+        ),
         imageUrl: post.image
           ? post.image.startsWith("http")
             ? post.image

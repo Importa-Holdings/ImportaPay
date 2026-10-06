@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/components/navbar/Navbar";
+import HeroNavbar from "../home/_components/HeroNavbar";
 import Footer from "../home/_components/Footer";
+import ReadyToMove from "../home/_components/ReadyToMove";
 import CorridorsHero from "./_components/CorridorsHero";
+import CheckCorridor from "./_components/CheckCorridor";
 import CorridorsTable from "./_components/CorridorsTable";
-import CrossBoder from "../home/_components/crossBoder";
 
 export const metadata: Metadata = {
   title: "Corridors | ImportaPay",
@@ -14,10 +15,14 @@ export const metadata: Metadata = {
 export default function CorridorsPage() {
   return (
     <div>
-      <Navbar />
+      <HeroNavbar />
       <CorridorsHero />
-      <CrossBoder />
+      <CheckCorridor />
       <CorridorsTable />
+      <ReadyToMove
+        title="Start sending across live global corridors"
+        description="Manage cross-border payments with clearer rates, reliable settlement, and access to live corridors from one platform."
+      />
       <Footer />
     </div>
   );

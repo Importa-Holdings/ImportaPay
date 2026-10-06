@@ -1,121 +1,72 @@
-"use client";
-
-import { ArrowRight, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowRight, CalendarDays } from "lucide-react";
 import Image from "next/image";
-import { Navbar } from "@/components/navbar/Navbar";
+import HeroNavbar from "./HeroNavbar";
+import HeroAnnotations from "./HeroAnnotations";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 const LandingPage = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  return (
+    <section className="relative overflow-hidden bg-[#FBF8FE] font-satoshi">
+      <Image
+        src="/image/hero-bg.webp"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="pointer-events-none object-cover object-top select-none"
+      />
+      <HeroNavbar />
 
-  useEffect(() => {
-    // Simulate loading time or wait for necessary assets
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000); // Show loader for at least 2 seconds
+      <div className="relative z-10 mx-auto flex max-w-[1440px] flex-col items-center px-4 pt-[104px] sm:px-6 md:pt-[140px] lg:pt-[179px]">
+        <HeroAnnotations />
 
-    return () => clearTimeout(timer);
-  }, []);
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-white">
-        <div className="text-center">
+        <span className="rounded-full bg-white px-4 py-[6px] text-[14px] font-medium leading-[24px] text-[#161319] shadow-[0_4px_16px_rgba(95,38,166,0.08)] sm:text-[15px]">
+          Built for businesses across Africa
+        </span>
+
+        <h1 className="mt-5 max-w-[1046px] text-center text-[40px] font-black leading-[1.0977] tracking-[-1.6px] text-[#161319] sm:text-[56px] sm:tracking-[-2.2px] md:text-[72px] md:tracking-[-2.9px] lg:mt-6 lg:text-[88px] lg:tracking-[-3.5px]">
+          Everything you need to manage{" "}
+          <span className="text-[#5F26A6]">global payments</span>
+        </h1>
+
+        <p className="mt-4 max-w-[972px] text-center text-[18px] font-normal leading-[28.8px] tracking-[0px] text-[#524E56] lg:mt-[17px]">
+          Pay suppliers and business partners across 190+ countries with
+          transparent rates and full payment visibility.
+        </p>
+
+        <div className="mt-8 flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row lg:mt-[32px]">
+          <Link
+            href="https://merchant.importa.biz"
+            className="flex h-[56px] w-full items-center justify-center gap-2 rounded-full bg-[#5F26A6] px-8 text-[17px] font-bold text-white shadow-[0_12px_28px_rgba(95,38,166,0.35)] transition-colors hover:bg-[#4E1C8C] sm:w-auto lg:h-[60px]"
+          >
+            Get started
+            <ArrowRight size={20} strokeWidth={2.25} />
+          </Link>
+          <Link
+            href="https://calendly.com/dgsoetan/30min"
+            className="flex h-[56px] w-full items-center justify-center gap-3 rounded-full bg-white pl-[10px] pr-7 text-[17px] font-medium text-[#161319] shadow-[0_8px_24px_rgba(95,38,166,0.08)] transition-shadow hover:shadow-[0_10px_28px_rgba(95,38,166,0.16)] sm:w-auto lg:h-[60px]"
+          >
+            <span className="flex h-[36px] w-[36px] items-center justify-center rounded-full bg-[#5F26A6] text-white lg:h-[40px] lg:w-[40px]">
+              <CalendarDays size={18} />
+            </span>
+            Book a call
+          </Link>
+        </div>
+
+        {/* Cropped at the hero's bottom edge so the dashboard sinks into it, as in Figma */}
+        <div className="relative mt-12 aspect-[960/250] w-full max-w-[960px] overflow-hidden rounded-t-[8px] shadow-[0_-12px_48px_rgba(95,38,166,0.14)] md:mt-20 md:aspect-[960/290] md:rounded-t-[14px] lg:mt-[130px] lg:aspect-[960/322]">
           <Image
-            src="/video/transparirent.gif"
-            alt="Loading..."
-            width={500}
-            height={500}
-            className="mx-auto"
+            src="/image/hero-dashboard.webp"
+            alt="Importapay dashboard overview"
+            width={1934}
+            height={718}
             priority
+            sizes="(max-width: 1000px) 100vw, 960px"
+            className="absolute inset-x-0 top-0 h-auto w-full"
           />
-          {/* <p className="mt-4 text-lg text-gray-600">Welcome...</p> */}
         </div>
       </div>
-    );
-  }
-
-  return (
-    <div
-      className={`
-        min-h-screen
-        bg-cover
-        bg-[500px]       /* default: center on mobile */
-        md:bg-center     /* from md screens up: shift to left (or pick your preference) */
-        relative
-        overflow-hidden
-        ${
-          isLoading
-            ? "opacity-0"
-            : "opacity-100 transition-opacity duration-500"
-        }
-      `}
-      style={{
-        backgroundImage:
-          "url('https://res.cloudinary.com/detr9iyys/image/upload/v1752324671/landing-bg_yrmnq6.png')",
-      }}
-    >
-      <Navbar />
-      {/* Main Content */}
-      <main className="relative z-10 pt-22 md:pt-35 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl space-y-7">
-            {/* Hero Section */}
-            <h1 className="font-sans text-4xl sm:text-5xl md:text-7xl font-bold text-white leading-tight">
-              Pay Your Vendors
-              <br />
-              Abroad Using Only
-              <br />
-              Naira
-            </h1>
-
-            <p className="font-sans text-xl md:text-2xl text-white/80 max-w-2xl leading-relaxed">
-              You don&apos;t need to look for dollars. We&apos;ve made it easier
-              for you to collect payments from your customers and pay your
-              suppliers abroad directly using naira through our licensed
-              partners.
-            </p>
-
-            {/*  Buttons */}
-            <div className="flex flex-col items-center sm:items-start sm:flex-row gap-4 md:pt-6 pt-35">
-              <Link href="https://merchant.importa.biz">
-                <Button
-                  size="lg"
-                  className="bg-white text-black border-white/30 hover:bg-white/30 backdrop-blur-sm
-                           transition-all duration-300 hover:scale-105
-                           flex items-center gap-2 sm:gap-3 px-4 py-3 sm:px-6 sm:py-4 text-base sm:text-lg"
-                >
-                  Get started
-                </Button>
-              </Link>
-              <Link href="https://calendly.com/dgsoetan/30min">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="bg-white text-black border-white/30 hover:bg-white/20 backdrop-blur-sm
-                           transition-all duration-300 hover:scale-105
-                           flex items-center gap-2 sm:gap-3 px-4 py-3 sm:px-6 sm:py-4 text-base sm:text-lg"
-                >
-                  Speak to Sales
-                  <ArrowRight size={20} className="text-black" />
-                </Button>
-              </Link>
-            </div>
-
-            {/* Feature Highlight */}
-            <div className="flex items-center gap-3 pt-4">
-              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-500/20 border border-green-400/30">
-                <Check size={14} className="text-green-400" />
-              </div>
-              <span className="text-white/90 md:text-lg text-[15px]">
-                Free to use, no hidden fees, and no need for a dollar account.
-              </span>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+    </section>
   );
 };
 

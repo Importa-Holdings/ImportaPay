@@ -1,7 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Share, Loader2, ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import React, { useState, useEffect, useMemo, FormEvent } from "react";
+import Link from "next/link";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Link2,
+  Loader2,
+  Mail,
+  Pencil,
+  Share,
+  Trash2,
+} from "lucide-react";
+import { useSubscribe } from "@/hooks/useSubscribe";
+import { usePosts } from "../hooks/usePosts";
+import { ArticleCard } from "../components/categories";
 import { useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner";
 import { useAuthStore } from "@/lib/store/authStore";
@@ -44,6 +58,118 @@ interface BlogPostClientProps {
   error?: string | null;
 }
 
+type TocItem = { id: string; text: string; level: 1 | 2 };
+
+const decodeEntities = (text: string) =>
+  text
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&(rsquo|lsquo|#39);/g, "'")
+    .replace(/&(rdquo|ldquo|quot);/g, '"')
+    .replace(/&[a-z#0-9]+;/gi, "");
+
+// Gives each h1/h2 in the post an id so the "On this page" list can link to it.
+function addHeadingIds(html: string): { html: string; toc: TocItem[] } {
+  const toc: TocItem[] = [];
+  const used = new Set<string>();
+  const out = (html || "").replace(
+    /<h([12])([^>]*)>([\s\S]*?)<\/h\1>/gi,
+    (match, level: string, attrs: string, inner: string) => {
+      const text = decodeEntities(inner.replace(/<[^>]+>/g, "")).trim();
+      if (!text) return match;
+      let id =
+        text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") ||
+        "section";
+      while (used.has(id)) id += "-2";
+      used.add(id);
+      toc.push({ id, text, level: level === "1" ? 1 : 2 });
+      return `<h${level}${attrs.replace(/\sid="[^"]*"/i, "")} id="${id}">${inner}</h${level}>`;
+    }
+  );
+  return { html: out, toc };
+}
+
+const readTime = (html: string) =>
+  Math.max(
+    1,
+    Math.round(
+      (html || "").replace(/<[^>]+>/g, " ").trim().split(/\s+/).length / 200
+    )
+  );
+
+const NewsletterCard = () => {
+  const [email, setEmail] = useState("");
+  const { subscribe, isLoading, isSubscribed } = useSubscribe();
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const { success } = await subscribe(email);
+    if (success) setEmail("");
+  };
+
+  return (
+    <div className="rounded-[20px] border border-[#EDE8F8] bg-[#F8F6FF] p-5">
+      <p className="text-[16px] font-black tracking-[-0.3px] text-[#17131A]">
+        Subscribe to our newsletter
+      </p>
+      <p className="mt-1.5 text-[13px] leading-[20px] text-[#524E56]">
+        Get the latest updates and news delivered to your inbox.
+      </p>
+      <form onSubmit={handleSubmit} className="mt-4 space-y-2.5">
+        <label className="relative block">
+          <span className="sr-only">Email address</span>
+          <Mail
+            size={15}
+            className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-[#6B6870]"
+          />
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+            disabled={isLoading || isSubscribed}
+            className="h-[42px] w-full rounded-full border border-[#EDE8F8] bg-white pr-3 pl-10 text-[13px] text-[#17131A] placeholder:text-[#A09CA6] focus:border-[#6A0DAD]/40 focus:ring-4 focus:ring-[#6A0DAD]/10 focus:outline-none disabled:opacity-60"
+          />
+        </label>
+        <button
+          type="submit"
+          disabled={isLoading || isSubscribed}
+          className={`flex h-[42px] w-full items-center justify-center gap-2 rounded-full text-[13px] font-bold text-white transition-colors disabled:cursor-not-allowed ${
+            isSubscribed
+              ? "bg-[#16A34A]"
+              : "bg-[#6A0DAD] hover:bg-[#5C0DB8] disabled:opacity-70"
+          }`}
+        >
+          {isLoading ? (
+            "Subscribing..."
+          ) : isSubscribed ? (
+            <>
+              <Check size={15} /> Subscribed!
+            </>
+          ) : (
+            "Subscribe"
+          )}
+        </button>
+      </form>
+    </div>
+  );
+};
+
+const AuthorLine = ({ date, minutes }: { date: string; minutes: number }) => (
+  <div className="flex items-center gap-3 text-left">
+    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F3EEFF] text-[13px] font-bold text-[#6A0DAD]">
+      IT
+    </span>
+    <div className="leading-tight">
+      <p className="text-[15px] font-bold text-[#17131A]">Importa Team</p>
+      <p className="mt-0.5 text-[13px] text-[#86828D]">
+        {date} · {minutes}min read
+      </p>
+    </div>
+  </div>
+);
+
 export default function BlogPostClient({
   postId,
   initialData,
@@ -56,6 +182,14 @@ export default function BlogPostClient({
   const [error, setError] = useState<string | null>(initialError || null);
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
+  const { posts: allPosts } = usePosts();
+  const relatedPosts = allPosts
+    .filter((p) => p.id !== String(postId))
+    .slice(0, 3);
+  const { html: contentHtml, toc } = useMemo(
+    () => addHeadingIds(post?.content || ""),
+    [post?.content]
+  );
 
   useEffect(() => {
     // Check if the current user is the author of the post
@@ -132,20 +266,20 @@ export default function BlogPostClient({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
-        <span className="ml-2 text-gray-600">Loading post...</span>
+      <div className="flex min-h-screen items-center justify-center font-satoshi">
+        <Loader2 className="h-8 w-8 animate-spin text-[#6A0DAD]" />
+        <span className="ml-2 text-[#524E56]">Loading post...</span>
       </div>
     );
   }
 
   if (error || !post) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center p-8">
-        <p className="text-red-500 mb-4">{error || "Post not found"}</p>
+      <div className="flex min-h-screen flex-col items-center justify-center p-8 font-satoshi">
+        <p className="mb-4 text-[#524E56]">{error || "Post not found"}</p>
         <button
           onClick={() => router.push("/blog")}
-          className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+          className="rounded-full bg-[#6A0DAD] px-6 py-2.5 font-bold text-white transition-colors hover:bg-[#5C0DB8]"
         >
           Back to Blog
         </button>
@@ -264,32 +398,39 @@ export default function BlogPostClient({
         };
 
         // Headings — larger, serif, spaced like Medium
+        // The page title is the only h1, so post h1/h2 become h2/h3
         if (name === "h1") {
           return (
-            <h1 className="text-4xl md:text-5xl font-serif font-bold leading-tight mt-8 mb-4 text-gray-900">
-              {renderChildren()}
-            </h1>
-          );
-        }
-        if (name === "h2") {
-          return (
-            <h2 className="text-2xl md:text-3xl font-serif font-semibold leading-snug mt-6 mb-3 text-gray-900">
+            <h2
+              id={attribs.id}
+              className="mt-10 mb-3 scroll-mt-28 text-[26px] font-black leading-[1.2] tracking-[-0.6px] text-[#17131A] md:text-[30px]"
+            >
               {renderChildren()}
             </h2>
           );
         }
-        if (name === "h3") {
+        if (name === "h2") {
           return (
-            <h3 className="text-xl font-semibold mt-6 mb-2 text-gray-900">
+            <h3
+              id={attribs.id}
+              className="mt-8 mb-2 scroll-mt-28 text-[21px] font-black leading-[1.3] tracking-[-0.4px] text-[#17131A] md:text-[23px]"
+            >
               {renderChildren()}
             </h3>
+          );
+        }
+        if (name === "h3") {
+          return (
+            <h4 className="mt-6 mb-2 text-[19px] font-bold text-[#17131A]">
+              {renderChildren()}
+            </h4>
           );
         }
 
         // Paragraphs — good line-height and margin
         if (name === "p") {
           return (
-            <p className="text-lg leading-[1.65] text-gray-700 mt-4 mb-4">
+            <p className="my-4 text-[17px] leading-[30px] text-[#524E56]">
               {renderChildren()}
             </p>
           );
@@ -298,14 +439,14 @@ export default function BlogPostClient({
         // Lists — normalize spacing. Unwrap <li><p>…</p></li> to plain <li>
         if (name === "ul") {
           return (
-            <ul className="list-disc ml-6 space-y-2 mt-4">
+            <ul className="mt-4 ml-6 list-disc space-y-2 text-[17px] leading-[28px] text-[#524E56] marker:text-[#6A0DAD]">
               {renderChildren()}
             </ul>
           );
         }
         if (name === "ol") {
           return (
-            <ol className="list-decimal ml-6 space-y-2 mt-4">
+            <ol className="mt-4 ml-6 list-decimal space-y-2 text-[17px] leading-[28px] text-[#524E56] marker:text-[#6A0DAD]">
               {renderChildren()}
             </ol>
           );
@@ -350,7 +491,7 @@ export default function BlogPostClient({
               src={src}
               alt={attribs.alt || ""}
               loading="lazy"
-              className={`${attribs.class || ""} rounded-lg w-full h-auto my-6`}
+              className={`${attribs.class || ""} my-8 h-auto w-full rounded-[16px]`}
             />
           );
         }
@@ -381,7 +522,7 @@ export default function BlogPostClient({
               rel={
                 isExternal ? "noopener noreferrer" : attribs.rel || undefined
               }
-              className="underline text-purple-600 hover:text-purple-800"
+              className="text-[#6A0DAD] underline underline-offset-2 hover:text-[#5C0DB8]"
             >
               {renderChildren()}
             </a>
@@ -391,7 +532,7 @@ export default function BlogPostClient({
         // blockquote
         if (name === "blockquote") {
           return (
-            <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-700 my-6">
+            <blockquote className="my-6 border-l-4 border-[#6A0DAD] pl-4 text-[18px] text-[#17131A] italic">
               {renderChildren()}
             </blockquote>
           );
@@ -424,115 +565,188 @@ export default function BlogPostClient({
   }
   /* -------------------- end helper -------------------- */
 
+  const minutes = readTime(post.content);
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+
+  const copyLink = async () => {
+    await navigator.clipboard.writeText(window.location.href);
+    toast.success("Link copied to clipboard");
+  };
+
+  const shareButtons = (
+    <div className="flex items-center gap-2">
+      <a
+        href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(post.title)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Share on X"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-[#EDE8F8] text-[#17131A] transition-colors hover:border-[#6A0DAD]/40 hover:text-[#6A0DAD]"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+        </svg>
+      </a>
+      <a
+        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Share on LinkedIn"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-[#EDE8F8] text-[#17131A] transition-colors hover:border-[#6A0DAD]/40 hover:text-[#6A0DAD]"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z" />
+        </svg>
+      </a>
+      <button
+        onClick={copyLink}
+        aria-label="Copy link"
+        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-[#EDE8F8] text-[#17131A] transition-colors hover:border-[#6A0DAD]/40 hover:text-[#6A0DAD]"
+      >
+        <Link2 size={16} />
+      </button>
+      <button
+        onClick={handleShare}
+        aria-label="More sharing options"
+        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-[#EDE8F8] text-[#17131A] transition-colors hover:border-[#6A0DAD]/40 hover:text-[#6A0DAD]"
+      >
+        <Share size={15} />
+      </button>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white font-satoshi">
       <Toaster position="top-right" />
-      <div className="max-w-3xl mx-auto px-4 pt-8">
-        <button
-          onClick={() => router.push("/blog")}
-          className="inline-flex transform cursor-pointer items-center text-gray-600 hover:text-purple-600 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Blog
-        </button>
-      </div>
 
-      <div className="max-w-3xl mx-auto px-4 py-12">
-        <h1 className="text-4xl font-bold mb-2 leading-tight text-gray-900">
-          {post.title}
-        </h1>
-
-        {post.subtitle && (
-          <p className="text-xl text-gray-600 mb-6">{post.subtitle}</p>
-        )}
-
-        <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
-          <div className="flex space-x-3 items-center">
-            <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-medium">
-              {post.categories?.name || "Uncategorized"}
-            </span>
-            <span className="text-sm text-gray-500">
-              {formatDate(post.created_at)}
-            </span>
-            <span className="text-sm text-gray-400">
-              • {Math.ceil(post.content.split(/\s+/).length / 200)} min read
-            </span>
+      {/* Header */}
+      <header className="bg-[#F8F6FF] px-4 pt-[112px] pb-14 sm:px-6 md:pt-[150px] lg:pt-[172px] lg:pb-[96px]">
+        <div className="mx-auto flex max-w-[860px] flex-col items-center text-center">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-[15px] font-medium text-[#6B6870] transition-colors hover:text-[#6A0DAD]"
+          >
+            <ArrowLeft size={17} strokeWidth={2.25} />
+            All articles
+          </Link>
+          <p className="mt-8 text-[15px] font-bold text-[#6A0DAD] capitalize md:mt-[48px]">
+            {post.categories?.name || "Uncategorized"}
+          </p>
+          <h1 className="mt-4 text-[36px] font-black leading-[1.1] tracking-[-1.3px] text-[#17131A] sm:text-[46px] md:text-[56px] md:tracking-[-2.2px]">
+            {post.title}
+          </h1>
+          {post.subtitle && (
+            <p className="mt-6 max-w-[620px] text-[17px] leading-[28px] text-[#524E56] md:text-[18px] md:leading-[29px]">
+              {post.subtitle}
+            </p>
+          )}
+          <div className="mt-8 md:mt-10">
+            <AuthorLine date={formatDate(post.created_at)} minutes={minutes} />
           </div>
-          <div className="flex space-x-2">
-            {isAuthor && token && (
-              <>
-                <button
-                  onClick={handleUpdate}
-                  className="border border-blue-300 px-4 py-1.5 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-blue-50 transition-colors"
-                >
-                  <span className="text-sm">Edit</span>
-                  <Pencil className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="border border-red-300 px-4 py-1.5 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span className="text-sm">Delete</span>
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </>
-            )}
-            <button
-              onClick={handleShare}
-              className="border border-gray-300 px-4 py-1.5 rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-gray-50 transition-colors"
-            >
-              <span className="text-sm">Share</span>
-              <Share className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-        <div className="w-full h-96 bg-gray-100 rounded-lg mb-8 overflow-hidden">
-          {post.image ? (
-            <img
-              src={post.image}
-              alt={post.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                // Fallback in case of image loading error
-                const target = e.target as HTMLImageElement;
-                target.onerror = null;
-                target.src =
-                  "https://via.placeholder.com/800x400?text=Image+Not+Available";
-              }}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <svg
-                className="w-24 h-24 text-gray-300"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+
+          {isAuthor && token && (
+            <div className="mt-6 flex gap-2">
+              <button
+                onClick={handleUpdate}
+                className="flex cursor-pointer items-center gap-2 rounded-full border border-[#EDE8F8] bg-white px-4 py-1.5 text-[13px] font-medium text-[#17131A] transition-colors hover:border-[#6A0DAD]/40"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1}
-                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
+                Edit <Pencil className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="flex cursor-pointer items-center gap-2 rounded-full border border-red-200 bg-white px-4 py-1.5 text-[13px] font-medium text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isDeleting ? "Deleting..." : "Delete"} <Trash2 className="h-3.5 w-3.5" />
+              </button>
             </div>
           )}
         </div>
+      </header>
 
-        {/* Rich text content rendering */}
-        <article className="max-w-3xl mx-auto font-serif">
-          {renderRichContent(post.content)}
-        </article>
-
-        {post.is_published === 0 && (
-          <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-yellow-800 text-sm">
-              ⚠️ This post is currently unpublished
-            </p>
+      {/* Cover image: shown whole, whatever its shape */}
+      {post.image && (
+        <div className="px-4 sm:px-6">
+          <div className="mx-auto -mt-6 max-w-[1160px] overflow-hidden rounded-[24px] bg-gradient-to-b from-[#F0EBFE] to-[#E9E0FE] md:-mt-10">
+            <img
+              src={post.image}
+              alt={post.title}
+              className="mx-auto h-auto max-h-[556px] w-full object-contain"
+            />
           </div>
-        )}
+        </div>
+      )}
+
+      {/* Body + sidebar */}
+      <div className="mx-auto grid max-w-[1160px] gap-12 px-4 pt-12 pb-16 sm:px-6 md:pt-16 lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-16 lg:px-0">
+        <div className="min-w-0">
+          <article className="mx-auto max-w-[760px]">
+            {renderRichContent(contentHtml)}
+          </article>
+
+          {post.is_published === 0 && (
+            <div className="mt-8 rounded-[12px] border border-yellow-200 bg-yellow-50 p-4">
+              <p className="text-[14px] text-yellow-800">
+                This post is currently unpublished
+              </p>
+            </div>
+          )}
+
+          <div className="mx-auto mt-12 flex max-w-[760px] flex-wrap items-center justify-between gap-4 border-t border-[#ECEAEE] pt-8">
+            <AuthorLine date={formatDate(post.created_at)} minutes={minutes} />
+            {shareButtons}
+          </div>
+        </div>
+
+        <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
+          {toc.length > 0 && (
+            <nav aria-label="On this page" className="hidden lg:block">
+              <p className="text-[13px] font-bold tracking-[0.08em] text-[#17131A] uppercase">
+                On this page
+              </p>
+              <ul className="mt-4 space-y-2.5 border-l border-[#ECEAEE]">
+                {toc.map((item) => (
+                  <li key={item.id}>
+                    <a
+                      href={`#${item.id}`}
+                      className={`-ml-px block border-l border-transparent text-[13px] leading-[19px] text-[#6B6870] transition-colors hover:border-[#6A0DAD] hover:text-[#6A0DAD] ${
+                        item.level === 1 ? "pl-4 font-medium" : "pl-7"
+                      }`}
+                    >
+                      {item.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+          <NewsletterCard />
+        </aside>
       </div>
+
+      {/* Keep reading */}
+      {relatedPosts.length > 0 && (
+        <section className="px-4 pb-16 sm:px-6 md:pb-[96px]">
+          <div className="mx-auto max-w-[1160px] rounded-[28px] bg-[#F8F6FF] px-5 py-10 md:px-10 md:py-12">
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="text-[26px] font-black tracking-[-0.8px] text-[#17131A] md:text-[28px]">
+                Keep reading
+              </h2>
+              <Link
+                href="/blog"
+                className="flex items-center gap-1.5 text-[14px] font-bold text-[#6A0DAD] hover:text-[#5C0DB8]"
+              >
+                View all articles
+                <ArrowRight size={16} strokeWidth={2.25} />
+              </Link>
+            </div>
+            <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {relatedPosts.map((related) => (
+                <ArticleCard key={related.id} article={related} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

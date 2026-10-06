@@ -1,4 +1,7 @@
 import BlogPostClient from "./BlogPostClient";
+import HeroNavbar from "../../home/_components/HeroNavbar";
+import Footer from "../../home/_components/Footer";
+import ReadyToMove from "../../home/_components/ReadyToMove";
 
 // Function to get the post data
 async function getPost(postId: string) {
@@ -37,7 +40,13 @@ export default async function BlogPostPage({ params }: PageProps) {
   // Return the component with pre-fetched data
   return (
     <div className="min-h-screen">
+      <HeroNavbar />
       <BlogPostClient postId={id} initialData={initialData} error={error} />
+      <ReadyToMove
+        title="Join Importapay Today!"
+        description="Join Importapay today and see how simple international payments can be."
+      />
+      <Footer />
     </div>
   );
 }

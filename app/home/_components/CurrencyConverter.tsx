@@ -1,3 +1,5 @@
+"use client";
+
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Calculator, ChevronDown } from "lucide-react";
@@ -248,20 +250,20 @@ const CurrencyConverter = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="mx-auto w-full max-w-md font-satoshi">
       <form
         onSubmit={handleSubmit}
-        className="rounded-[2rem] bg-white/10 border border-white/15 backdrop-blur-sm p-4 sm:p-5 shadow-xl shadow-purple-950/20"
+        className="rounded-[24px] border border-[#EDE8F8] bg-white p-5 shadow-[0_12px_40px_rgba(106,13,173,0.08)] sm:p-6"
       >
         <div className="space-y-4">
           <div className="space-y-2">
             <label
               htmlFor="from-currency"
-              className="px-1 text-xs font-semibold uppercase tracking-wide text-white/70"
+              className="px-1 text-[12px] font-medium text-[#86828D]"
             >
               Currency you are sending from
             </label>
-            <div className="relative flex min-h-14 items-center gap-3 rounded-2xl bg-white px-4 text-black">
+            <div className="relative flex min-h-14 items-center gap-3 rounded-[14px] border border-[#EDE8F8] bg-[#FBFAFE] px-4 text-[#17131A]">
               <Image src={getSendingFlag(fromCurrency)} alt="" width={24} height={18} className="h-[18px] w-6 rounded-sm object-cover" />
               <select
                 id="from-currency"
@@ -282,11 +284,11 @@ const CurrencyConverter = () => {
           <div className="space-y-2">
             <label
               htmlFor="receiver-currency"
-              className="px-1 text-xs font-semibold uppercase tracking-wide text-white/70"
+              className="px-1 text-[12px] font-medium text-[#86828D]"
             >
               Receiver currency
             </label>
-            <div className="relative flex min-h-14 items-center gap-3 rounded-2xl bg-white px-4 text-black">
+            <div className="relative flex min-h-14 items-center gap-3 rounded-[14px] border border-[#EDE8F8] bg-[#FBFAFE] px-4 text-[#17131A]">
               <Image src={getCurrencyMeta(receiverCurrency).flag} alt="" width={24} height={18} className="h-[18px] w-6 shrink-0 rounded-sm object-cover" />
               <select
                 id="receiver-currency"
@@ -307,7 +309,7 @@ const CurrencyConverter = () => {
               </select>
               <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" aria-hidden="true" />
             </div>
-            <p className="px-1 text-[11px] text-white/60">
+            <p className="px-1 text-[11px] text-[#86828D]">
               {getCurrencyMeta(receiverCurrency).name}
               {getCurrencyMeta(receiverCurrency).country
                 ? ` · ${getCurrencyMeta(receiverCurrency).country}`
@@ -318,11 +320,11 @@ const CurrencyConverter = () => {
           <div className="space-y-2">
             <label
               htmlFor="receiver-amount"
-              className="px-1 text-xs font-semibold uppercase tracking-wide text-white/70"
+              className="px-1 text-[12px] font-medium text-[#86828D]"
             >
               Amount
             </label>
-            <div className="rounded-2xl bg-white p-4 sm:p-5">
+            <div className="rounded-[14px] border border-[#EDE8F8] bg-[#FBFAFE] p-4 sm:p-5">
               <input
                 id="receiver-amount"
                 type="text"
@@ -336,7 +338,7 @@ const CurrencyConverter = () => {
                 }}
                 aria-invalid={error ? "true" : undefined}
                 aria-describedby={error ? "quote-error" : undefined}
-                className="w-full bg-transparent text-3xl font-bold text-black placeholder:text-black/30 outline-none focus-visible:ring-2 focus-visible:ring-[#6A0DAD] sm:text-4xl"
+                className="w-full bg-transparent text-3xl font-bold text-[#17131A] placeholder:text-[#17131A]/30 outline-none focus-visible:ring-2 focus-visible:ring-[#6A0DAD] sm:text-4xl"
                 placeholder="0"
               />
             </div>
@@ -352,7 +354,7 @@ const CurrencyConverter = () => {
             type="submit"
             disabled={submitting || loadingCorridors}
             aria-busy={submitting}
-            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-[#380a5e] transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-70 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#6A0DAD]"
+            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#6A0DAD] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#5C0DB8] disabled:cursor-not-allowed disabled:opacity-70 focus-visible:ring-2 focus-visible:ring-[#6A0DAD] focus-visible:ring-offset-2"
           >
             <Calculator className="h-4 w-4" aria-hidden="true" />
             {submitting ? "Calculating..." : "Calculate"}
@@ -360,24 +362,24 @@ const CurrencyConverter = () => {
         </div>
       </form>
 
-      <div className="mt-4 rounded-[1.5rem] border border-white/15 bg-white/10 p-4 text-sm text-white/85">
+      <div className="mt-4 rounded-[16px] border border-[#EDE8F8] bg-[#F8F6FF] p-4 text-sm text-[#524E56]">
         {result ? (
           <dl className="space-y-3">
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-white/60">Total amount to pay</dt>
-              <dd className="font-semibold text-white">{result.totalAmountToPay}</dd>
+              <dt className="text-[#86828D]">Total amount to pay</dt>
+              <dd className="font-semibold text-[#17131A]">{result.totalAmountToPay}</dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-white/60">Fee</dt>
-              <dd className="font-semibold text-white">{result.fee}</dd>
+              <dt className="text-[#86828D]">Fee</dt>
+              <dd className="font-semibold text-[#17131A]">{result.fee}</dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-white/60">Rate</dt>
-              <dd className="font-semibold text-white">{result.rate}</dd>
+              <dt className="text-[#86828D]">Rate</dt>
+              <dd className="font-semibold text-[#17131A]">{result.rate}</dd>
             </div>
           </dl>
         ) : (
-          <p className="text-center text-white/65">Enter an amount and calculate to preview the quote.</p>
+          <p className="text-center text-[#86828D]">Enter an amount and calculate to preview the quote.</p>
         )}
       </div>
     </div>

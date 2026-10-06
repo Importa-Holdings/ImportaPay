@@ -1,4 +1,9 @@
 import LandingPage from "./home/_components/LandingPage";
+import TrustedBy from "./home/_components/TrustedBy";
+import PopularCorridors from "./home/_components/PopularCorridors";
+import WhyImportapay from "./home/_components/WhyImportapay";
+import BuiltForBusinesses from "./home/_components/BuiltForBusinesses";
+import ReadyToMove from "./home/_components/ReadyToMove";
 import RateTicker from "./home/_components/RateTicker";
 import ImageModal from "./home/_components/ImageModal";
 import Business from "./home/_components/Business";
@@ -12,13 +17,12 @@ export default function Home() {
   return (
     <div>
       <LandingPage />
-      <RateTicker />
-      <CoreOfferings />
-      <ImageModal />
-      <Business />
-      <Safe />
-      <FAQSection />
-      <ContentSection />
+      <TrustedBy />
+      <PopularCorridors />
+      <WhyImportapay />
+      <BuiltForBusinesses />
+      <ReadyToMove />
+
       <Footer />
     </div>
   );

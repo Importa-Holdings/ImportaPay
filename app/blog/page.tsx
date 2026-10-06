@@ -1,17 +1,20 @@
 import React from "react";
-import { Navbar } from "../../components/navbar/Navbar";
-import LandingPage from "./components/LandingPage";
-import Categories from "./components/categories";
+import HeroNavbar from "../home/_components/HeroNavbar";
+import BlogContent from "./components/BlogContent";
+import Subscribe from "./components/Subscribe";
 import Footer from "../home/_components/Footer";
-import Join from "./components/Join";
+import ReadyToMove from "../home/_components/ReadyToMove";
 
 const page = () => {
   return (
     <div>
-      <Navbar />
-      <LandingPage />
-      <Categories />
-      <Join />
+      <HeroNavbar />
+      <BlogContent />
+      <Subscribe />
+      <ReadyToMove
+        title="Join Importapay Today!"
+        description="Join Importapay today and see how simple international payments can be."
+      />
       <Footer />
     </div>
   );
