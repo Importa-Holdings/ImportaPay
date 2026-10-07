@@ -33,7 +33,7 @@ const handwriting = Shadows_Into_Light_Two({
 
 export const metadata: Metadata = {
   title: "ImportaPay",
-  description: "Pay Your Vendors Abroad Using Only Naira",
+  description: "Global payment infrastructure for businesses in Africa.",
 };
 
 export default function RootLayout({
