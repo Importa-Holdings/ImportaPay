@@ -5,23 +5,28 @@ import Image from "next/image";
 import { Search } from "lucide-react";
 
 type Corridor = {
-  flag: string;
   country: string;
   rail: string;
   currency: string;
   recipient: string;
+  remitter: string;
   cutOff: string[];
   processingDays: string[];
   settlement: string[];
 };
 
+// Source: ImportaPay Country Coverage List, updated 09 September 2026.
+const COVERAGE_UPDATED = "09 September 2026";
+
 const countryFlags: Record<string, string> = {
   "190+ countries": "/image/flags/global.svg",
   Brazil: "/image/flags/br.svg",
+  Canada: "/image/flags/ca.svg",
   China: "/image/flags/cn.svg",
   Colombia: "/image/flags/co.svg",
   "European Union": "/image/flags/eu.svg",
   "Hong Kong": "/image/flags/hk.svg",
+  Japan: "/image/flags/jp.svg",
   Mexico: "/image/flags/mx.svg",
   Nigeria: "/image/flags/ng.svg",
   Philippines: "/image/flags/ph.svg",
@@ -30,143 +35,168 @@ const countryFlags: Record<string, string> = {
   "United States": "/image/flags/us.svg",
 };
 
+const PB = "Personal / Business";
+const ORIGINATOR = "Originator Name";
+const BFI = "BFI or BFI payment provider name";
+const OFI = "OFI Name";
+
 const corridors: Corridor[] = [
   {
-    flag: "🌍",
     country: "190+ countries",
     rail: "WIRE",
     currency: "USD",
-    recipient: "Personal / Business",
+    recipient: PB,
+    remitter: ORIGINATOR,
     cutOff: ["07:30 GMT"],
     processingDays: ["Mon-Fri"],
     settlement: ["T+0"],
   },
   {
-    flag: "🇧🇷",
     country: "Brazil",
     rail: "PIX",
     currency: "BRL",
-    recipient: "Personal / Business",
+    recipient: PB,
+    remitter: BFI,
     cutOff: ["N/A"],
     processingDays: ["Everyday"],
     settlement: ["Real-time"],
   },
   {
-    flag: "🇨🇳",
+    country: "Canada",
+    rail: "BANK_TRANSFER (ACSS)",
+    currency: "CAD",
+    recipient: PB,
+    remitter: ORIGINATOR,
+    cutOff: ["22:00 GMT"],
+    processingDays: ["Mon-Fri"],
+    settlement: ["T+1"],
+  },
+  {
     country: "China",
     rail: "WIRE",
     currency: "CNY",
-    recipient: "Personal / Business",
+    recipient: PB,
+    remitter: BFI,
     cutOff: ["15:00 GMT"],
     processingDays: ["Mon-Fri"],
     settlement: ["T+0"],
   },
   {
-    flag: "🇨🇴",
     country: "Colombia",
     rail: "BANK_TRANSFER",
     currency: "COP",
-    recipient: "Personal / Business",
+    recipient: PB,
+    remitter: BFI,
     cutOff: ["18:00 GMT"],
     processingDays: ["Mon-Fri"],
     settlement: ["T+0"],
   },
   {
-    flag: "🇪🇺",
     country: "European Union",
     rail: "SEPA / SEPA Instant",
     currency: "EUR",
-    recipient: "Personal / Business",
+    recipient: PB,
+    remitter: ORIGINATOR,
     cutOff: ["N/A (Instant <100k)", "12:00 GMT (SEPA >100k)"],
     processingDays: ["Everyday", "Mon-Fri"],
     settlement: ["Real-time (<100k)", "T+0 (>100k)"],
   },
   {
-    flag: "🇭🇰",
     country: "Hong Kong",
     rail: "CHATS",
     currency: "HKD",
-    recipient: "Personal / Business",
+    recipient: PB,
+    remitter: ORIGINATOR,
     cutOff: ["08:00 GMT"],
     processingDays: ["Mon-Fri"],
     settlement: ["T+0"],
   },
   {
-    flag: "🇭🇰",
     country: "Hong Kong",
     rail: "WIRE",
     currency: "HKD",
-    recipient: "Personal / Business",
+    recipient: PB,
+    remitter: ORIGINATOR,
     cutOff: ["15:00 GMT"],
     processingDays: ["Mon-Fri"],
     settlement: ["T+0"],
   },
   {
-    flag: "🇲🇽",
+    country: "Japan",
+    rail: "ZENGIN",
+    currency: "JPY",
+    recipient: PB,
+    remitter: ORIGINATOR,
+    cutOff: ["06:00 GMT"],
+    processingDays: ["Mon-Fri"],
+    settlement: ["T+0"],
+  },
+  {
     country: "Mexico",
     rail: "SPEI",
     currency: "MXN",
-    recipient: "Personal / Business",
+    recipient: PB,
+    remitter: BFI,
     cutOff: ["N/A"],
     processingDays: ["Everyday"],
     settlement: ["Real-time"],
   },
   {
-    flag: "🇳🇬",
     country: "Nigeria",
     rail: "BANK_TRANSFER",
     currency: "NGN",
-    recipient: "Personal / Business",
+    recipient: PB,
+    remitter: BFI,
     cutOff: ["N/A"],
     processingDays: ["Everyday"],
     settlement: ["Real-time"],
   },
   {
-    flag: "🇵🇭",
     country: "Philippines",
     rail: "INSTAPAY",
     currency: "PHP",
-    recipient: "Personal / Business",
+    recipient: PB,
+    remitter: ORIGINATOR,
     cutOff: ["N/A"],
     processingDays: ["Everyday"],
     settlement: ["Real-time"],
   },
   {
-    flag: "🇵🇭",
     country: "Philippines",
     rail: "PESONET",
     currency: "PHP",
-    recipient: "Personal / Business",
+    recipient: PB,
+    remitter: ORIGINATOR,
     cutOff: ["06:30 GMT"],
     processingDays: ["Mon-Fri"],
     settlement: ["T+0"],
   },
   {
-    flag: "🇸🇬",
     country: "Singapore",
     rail: "BANK_TRANSFER (FAST)",
     currency: "SGD",
-    recipient: "Personal / Business",
+    recipient: PB,
+    remitter: ORIGINATOR,
     cutOff: ["N/A"],
     processingDays: ["Everyday"],
     settlement: ["Real-time"],
   },
   {
-    flag: "🇦🇪",
     country: "United Arab Emirates",
     rail: "BANK_TRANSFER (IPP / FTS)",
     currency: "AED",
-    recipient: "Personal / Business",
+    recipient: PB,
+    remitter: OFI,
     cutOff: ["N/A (<50k AED)", "16:45 GMT (>50k AED)"],
     processingDays: ["Everyday", "Mon-Fri"],
     settlement: ["T+0"],
   },
   {
-    flag: "🇺🇸",
     country: "United States",
     rail: "FEDWIRE",
     currency: "USD",
-    recipient: "Personal / Business",
+    recipient: PB,
+    remitter: OFI,
     cutOff: ["21:00 GMT"],
     processingDays: ["Mon-Fri"],
     settlement: ["Real-time"],
@@ -175,8 +205,14 @@ const corridors: Corridor[] = [
 
 const filters = [
   { label: "All", match: () => true },
-  { label: "Real-time", match: (c: Corridor) => c.settlement.some((s) => s.startsWith("Real-time")) },
-  { label: "Same day (T+0)", match: (c: Corridor) => c.settlement.some((s) => s.startsWith("T+0")) },
+  {
+    label: "Real-time",
+    match: (c: Corridor) => c.settlement.some((s) => s.startsWith("Real-time")),
+  },
+  {
+    label: "Same day (T+0)",
+    match: (c: Corridor) => c.settlement.some((s) => s.startsWith("T+0")),
+  },
 ];
 
 const headers = [
@@ -184,6 +220,7 @@ const headers = [
   "Payment rail",
   "Currency",
   "Recipient",
+  "Remitter name",
   "Cut-off time",
   "Processing days",
   "Settlement",
@@ -213,7 +250,7 @@ const CorridorsTable = () => {
         (!term ||
           c.country.toLowerCase().includes(term) ||
           c.currency.toLowerCase().includes(term) ||
-          c.rail.toLowerCase().includes(term))
+          c.rail.toLowerCase().includes(term)),
     );
   }, [activeFilter, query]);
 
@@ -231,6 +268,11 @@ const CorridorsTable = () => {
             <p className="mt-2 text-[15px] text-[#524E56] md:text-[16px]">
               Explore supported corridors, payout rails, currencies, and
               settlement timelines.
+            </p>
+            <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#F3EEFF] px-3 py-1 text-[12px] font-bold text-[#6A0DAD]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#16A34A]" />
+              {corridors.length} corridors · All Live · Updated{" "}
+              {COVERAGE_UPDATED}
             </p>
           </div>
 
@@ -270,13 +312,13 @@ const CorridorsTable = () => {
 
         <div className="mt-8 overflow-hidden rounded-[20px] border border-[#EDE8F8] md:mt-10">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[1000px] border-collapse text-left">
+            <table className="w-full min-w-[1100px] border-collapse text-left">
               <thead>
                 <tr className="bg-[#F8F6FF]">
                   {headers.map((header) => (
                     <th
                       key={header}
-                      className="px-5 py-4 text-[13px] font-bold whitespace-nowrap text-[#17131A] first:pl-6 last:pr-6"
+                      className="px-3 py-4 text-[13px] leading-[17px] font-bold text-[#17131A] first:pl-6 last:pr-6"
                     >
                       {header}
                     </th>
@@ -289,37 +331,49 @@ const CorridorsTable = () => {
                     key={`${corridor.country}-${corridor.rail}`}
                     className="border-t border-[#F1EEF5] transition-colors hover:bg-[#FBFAFE]"
                   >
-                    <td className="py-4 pr-5 pl-6">
+                    <td className="py-4 pr-4 pl-6">
                       <div className="flex items-center gap-3">
                         <Image
                           src={countryFlags[corridor.country]}
                           alt=""
                           width={36}
                           height={24}
-                          className="h-[14px] w-[20px] shrink-0 rounded-[2px] object-cover"
+                          className="h-[14px] w-[20px] shrink-0 rounded-[2px] object-cover ring-1 ring-[#17131A]/10"
                         />
-                        <span className="text-[14px] font-bold whitespace-nowrap text-[#17131A]">
+                        <span className="text-[14px] leading-[18px] font-bold text-[#17131A]">
                           {corridor.country}
                         </span>
                       </div>
                     </td>
-                    <td className="px-5 py-4 font-medium whitespace-nowrap text-[#2C2833]">{corridor.rail}</td>
-                    <td className="px-5 py-4">
+                    <td className="px-3 py-4 font-medium whitespace-nowrap text-[#2C2833]">
+                      {corridor.rail.split(" (")[0]}
+                      {corridor.rail.includes(" (") && (
+                        <div className="text-[11px] font-normal text-[#86828D]">
+                          ({corridor.rail.split(" (")[1]}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-3 py-4">
                       <span className="rounded-full bg-[#F3EEFF] px-2.5 py-1 text-[12px] font-medium text-[#6A0DAD]">
                         {corridor.currency}
                       </span>
                     </td>
-                    <td className="px-5 py-4 whitespace-nowrap">{corridor.recipient}</td>
-                    <td className="px-5 py-4">
+                    <td className="px-3 py-4 whitespace-nowrap">
+                      {corridor.recipient}
+                    </td>
+                    <td className="min-w-[160px] px-3 py-4 leading-[18px]">
+                      {corridor.remitter}
+                    </td>
+                    <td className="px-3 py-4">
                       <Lines lines={corridor.cutOff} />
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-3 py-4">
                       <Lines lines={corridor.processingDays} />
                     </td>
-                    <td className="px-5 py-4 font-medium text-[#17131A]">
+                    <td className="px-3 py-4 font-medium text-[#17131A]">
                       <Lines lines={corridor.settlement} />
                     </td>
-                    <td className="py-4 pr-6 pl-5">
+                    <td className="py-4 pr-6 pl-4">
                       <span className="inline-flex items-center gap-1.5 text-[13px] font-bold text-[#16A34A]">
                         <span className="h-1.5 w-1.5 rounded-full bg-[#16A34A]" />
                         Live
@@ -329,7 +383,10 @@ const CorridorsTable = () => {
                 ))}
                 {rows.length === 0 && (
                   <tr className="border-t border-[#F1EEF5]">
-                    <td colSpan={headers.length} className="px-6 py-12 text-center text-[14px] text-[#86828D]">
+                    <td
+                      colSpan={headers.length}
+                      className="px-6 py-12 text-center text-[14px] text-[#86828D]"
+                    >
                       No corridors match your search.
                     </td>
                   </tr>
@@ -347,8 +404,18 @@ const CorridorsTable = () => {
         </p>
         <p className="mt-3 text-[12px] text-[#86828D]">
           Questions about coverage?{" "}
-          <a href="mailto:hello@importa.biz" className="font-bold text-[#6A0DAD] hover:underline">
-            hello@importa.biz
+          <a
+            href="mailto:importapay@importa.biz"
+            className="font-bold text-[#6A0DAD] hover:underline"
+          >
+            importapay@importa.biz
+          </a>{" "}
+          ·{" "}
+          <a
+            href="https://pay.importa.biz"
+            className="font-bold text-[#6A0DAD] hover:underline"
+          >
+            pay.importa.biz
           </a>
         </p>
       </div>
