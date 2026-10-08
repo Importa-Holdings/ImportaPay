@@ -6,44 +6,50 @@ import { Search } from "lucide-react";
 
 type Corridor = {
   country: string;
-  rail: string;
+  rail: string[];
   currency: string;
   recipient: string;
   remitter: string;
   cutOff: string[];
   processingDays: string[];
   settlement: string[];
+  // Marks the status with † and links to the footnote under the table
+  caveat?: boolean;
 };
 
-// Source: ImportaPay Country Coverage List, updated 09 September 2026.
-const COVERAGE_UPDATED = "09 September 2026";
+// Source: ImportaPay Country Coverage List, updated 28 September 2026.
+const COVERAGE_UPDATED = "28 September 2026";
 
 const countryFlags: Record<string, string> = {
   "190+ countries": "/image/flags/global.svg",
+  Australia: "/image/flags/au.svg",
   Brazil: "/image/flags/br.svg",
   Canada: "/image/flags/ca.svg",
   China: "/image/flags/cn.svg",
   Colombia: "/image/flags/co.svg",
   "European Union": "/image/flags/eu.svg",
   "Hong Kong": "/image/flags/hk.svg",
+  India: "/image/flags/in.svg",
   Japan: "/image/flags/jp.svg",
   Mexico: "/image/flags/mx.svg",
   Nigeria: "/image/flags/ng.svg",
   Philippines: "/image/flags/ph.svg",
   Singapore: "/image/flags/sg.svg",
   "United Arab Emirates": "/image/flags/ae.svg",
+  "United Kingdom": "/image/flags/gb.svg",
   "United States": "/image/flags/us.svg",
+  Vietnam: "/image/flags/vn.svg",
 };
 
 const PB = "Personal / Business";
 const ORIGINATOR = "Originator Name";
-const BFI = "BFI or BFI payment provider name";
+const BFI_PROVIDER = "BFI or BFI payment provider name";
 const OFI = "OFI Name";
 
 const corridors: Corridor[] = [
   {
     country: "190+ countries",
-    rail: "WIRE",
+    rail: ["WIRE"],
     currency: "USD",
     recipient: PB,
     remitter: ORIGINATOR,
@@ -52,18 +58,28 @@ const corridors: Corridor[] = [
     settlement: ["T+0"],
   },
   {
+    country: "Australia",
+    rail: ["NPP / BECS"],
+    currency: "AUD",
+    recipient: PB,
+    remitter: ORIGINATOR,
+    cutOff: ["N/A (<1m AUD)", "09:00 GMT (>1m AUD)"],
+    processingDays: ["Everyday", "Mon-Fri"],
+    settlement: ["Real-time (<100k AUD)", "T+0 (>100k AUD)"],
+  },
+  {
     country: "Brazil",
-    rail: "PIX",
+    rail: ["PIX"],
     currency: "BRL",
     recipient: PB,
-    remitter: BFI,
+    remitter: BFI_PROVIDER,
     cutOff: ["N/A"],
     processingDays: ["Everyday"],
     settlement: ["Real-time"],
   },
   {
     country: "Canada",
-    rail: "BANK_TRANSFER (ACSS)",
+    rail: ["BANK_TRANSFER (ACSS)"],
     currency: "CAD",
     recipient: PB,
     remitter: ORIGINATOR,
@@ -73,27 +89,27 @@ const corridors: Corridor[] = [
   },
   {
     country: "China",
-    rail: "WIRE",
+    rail: ["WIRE"],
     currency: "CNY",
     recipient: PB,
-    remitter: BFI,
+    remitter: BFI_PROVIDER,
     cutOff: ["15:00 GMT"],
     processingDays: ["Mon-Fri"],
     settlement: ["T+0"],
   },
   {
     country: "Colombia",
-    rail: "BANK_TRANSFER",
+    rail: ["BANK_TRANSFER"],
     currency: "COP",
     recipient: PB,
-    remitter: BFI,
+    remitter: BFI_PROVIDER,
     cutOff: ["18:00 GMT"],
     processingDays: ["Mon-Fri"],
     settlement: ["T+0"],
   },
   {
     country: "European Union",
-    rail: "SEPA / SEPA Instant",
+    rail: ["SEPA / SEPA Instant"],
     currency: "EUR",
     recipient: PB,
     remitter: ORIGINATOR,
@@ -103,7 +119,7 @@ const corridors: Corridor[] = [
   },
   {
     country: "Hong Kong",
-    rail: "CHATS",
+    rail: ["CHATS"],
     currency: "HKD",
     recipient: PB,
     remitter: ORIGINATOR,
@@ -113,7 +129,7 @@ const corridors: Corridor[] = [
   },
   {
     country: "Hong Kong",
-    rail: "WIRE",
+    rail: ["WIRE"],
     currency: "HKD",
     recipient: PB,
     remitter: ORIGINATOR,
@@ -122,8 +138,19 @@ const corridors: Corridor[] = [
     settlement: ["T+0"],
   },
   {
+    country: "India",
+    rail: ["IMPS / RTGS / NEFT"],
+    currency: "INR",
+    recipient: PB,
+    remitter: "Originator Name (NEFT)",
+    cutOff: ["N/A (IMPS, <500k INR)", "RTGS / NEFT (to confirm)"],
+    processingDays: ["Everyday", "Mon-Fri"],
+    settlement: ["Real-time (IMPS)", "T+0 (NEFT)"],
+    caveat: true,
+  },
+  {
     country: "Japan",
-    rail: "ZENGIN",
+    rail: ["ZENGIN"],
     currency: "JPY",
     recipient: PB,
     remitter: ORIGINATOR,
@@ -133,27 +160,27 @@ const corridors: Corridor[] = [
   },
   {
     country: "Mexico",
-    rail: "SPEI",
+    rail: ["SPEI"],
     currency: "MXN",
     recipient: PB,
-    remitter: BFI,
+    remitter: BFI_PROVIDER,
     cutOff: ["N/A"],
     processingDays: ["Everyday"],
     settlement: ["Real-time"],
   },
   {
     country: "Nigeria",
-    rail: "BANK_TRANSFER",
+    rail: ["BANK_TRANSFER"],
     currency: "NGN",
     recipient: PB,
-    remitter: BFI,
+    remitter: BFI_PROVIDER,
     cutOff: ["N/A"],
     processingDays: ["Everyday"],
     settlement: ["Real-time"],
   },
   {
     country: "Philippines",
-    rail: "INSTAPAY",
+    rail: ["INSTAPAY / GCASH"],
     currency: "PHP",
     recipient: PB,
     remitter: ORIGINATOR,
@@ -163,7 +190,7 @@ const corridors: Corridor[] = [
   },
   {
     country: "Philippines",
-    rail: "PESONET",
+    rail: ["PESONET"],
     currency: "PHP",
     recipient: PB,
     remitter: ORIGINATOR,
@@ -173,7 +200,7 @@ const corridors: Corridor[] = [
   },
   {
     country: "Singapore",
-    rail: "BANK_TRANSFER (FAST)",
+    rail: ["BANK_TRANSFER (FAST)", "MEPS (RTGS)"],
     currency: "SGD",
     recipient: PB,
     remitter: ORIGINATOR,
@@ -183,7 +210,7 @@ const corridors: Corridor[] = [
   },
   {
     country: "United Arab Emirates",
-    rail: "BANK_TRANSFER (IPP / FTS)",
+    rail: ["BANK_TRANSFER (IPP / FTS)"],
     currency: "AED",
     recipient: PB,
     remitter: OFI,
@@ -192,14 +219,34 @@ const corridors: Corridor[] = [
     settlement: ["T+0"],
   },
   {
+    country: "United Kingdom",
+    rail: ["FPS / CHAPS"],
+    currency: "GBP",
+    recipient: PB,
+    remitter: "BFI Name",
+    cutOff: ["N/A (FPS)", "15:30 GMT (CHAPS)"],
+    processingDays: ["Everyday", "Mon-Fri"],
+    settlement: ["Real-time (FPS, <1m GBP)", "T+0 (CHAPS, >1m GBP)"],
+  },
+  {
     country: "United States",
-    rail: "FEDWIRE",
+    rail: ["FEDWIRE"],
     currency: "USD",
     recipient: PB,
     remitter: OFI,
     cutOff: ["21:00 GMT"],
     processingDays: ["Mon-Fri"],
     settlement: ["Real-time"],
+  },
+  {
+    country: "Vietnam",
+    rail: ["NAPAS / CITAD"],
+    currency: "VND",
+    recipient: PB,
+    remitter: BFI_PROVIDER,
+    cutOff: ["09:00 GMT"],
+    processingDays: ["Everyday", "Mon-Fri"],
+    settlement: ["<1 hour (NAPAS, <499m VND)", "T+1 (CITAD, >499m VND)"],
   },
 ];
 
@@ -229,11 +276,24 @@ const headers = [
 
 const Lines = ({ lines }: { lines: string[] }) => (
   <>
-    {lines.map((line) => (
-      <div key={line} className="whitespace-nowrap">
-        {line}
-      </div>
-    ))}
+    {lines.map((line) => {
+      const split = line.indexOf(" (");
+      const main = split === -1 ? line : line.slice(0, split);
+      const detail = split === -1 ? null : line.slice(split + 1);
+      return (
+        <div key={line}>
+          <span className="whitespace-nowrap">{main}</span>
+          {detail && (
+            <>
+              {" "}
+              <span className="text-[11px] font-normal whitespace-nowrap text-[#86828D]">
+                {detail}
+              </span>
+            </>
+          )}
+        </div>
+      );
+    })}
   </>
 );
 
@@ -250,7 +310,7 @@ const CorridorsTable = () => {
         (!term ||
           c.country.toLowerCase().includes(term) ||
           c.currency.toLowerCase().includes(term) ||
-          c.rail.toLowerCase().includes(term)),
+          c.rail.join(" ").toLowerCase().includes(term)),
     );
   }, [activeFilter, query]);
 
@@ -328,7 +388,7 @@ const CorridorsTable = () => {
               <tbody className="text-[13px] text-[#524E56]">
                 {rows.map((corridor) => (
                   <tr
-                    key={`${corridor.country}-${corridor.rail}`}
+                    key={`${corridor.country}-${corridor.rail.join()}`}
                     className="border-t border-[#F1EEF5] transition-colors hover:bg-[#FBFAFE]"
                   >
                     <td className="py-4 pr-4 pl-6">
@@ -345,13 +405,8 @@ const CorridorsTable = () => {
                         </span>
                       </div>
                     </td>
-                    <td className="px-3 py-4 font-medium whitespace-nowrap text-[#2C2833]">
-                      {corridor.rail.split(" (")[0]}
-                      {corridor.rail.includes(" (") && (
-                        <div className="text-[11px] font-normal text-[#86828D]">
-                          ({corridor.rail.split(" (")[1]}
-                        </div>
-                      )}
+                    <td className="px-3 py-4 font-medium text-[#2C2833]">
+                      <Lines lines={corridor.rail} />
                     </td>
                     <td className="px-3 py-4">
                       <span className="rounded-full bg-[#F3EEFF] px-2.5 py-1 text-[12px] font-medium text-[#6A0DAD]">
@@ -377,6 +432,15 @@ const CorridorsTable = () => {
                       <span className="inline-flex items-center gap-1.5 text-[13px] font-bold text-[#16A34A]">
                         <span className="h-1.5 w-1.5 rounded-full bg-[#16A34A]" />
                         Live
+                        {corridor.caveat && (
+                          <a
+                            href="#coverage-note"
+                            aria-label="See note"
+                            className="text-[#6A0DAD]"
+                          >
+                            †
+                          </a>
+                        )}
                       </span>
                     </td>
                   </tr>
@@ -396,7 +460,15 @@ const CorridorsTable = () => {
           </div>
         </div>
 
-        <p className="mt-6 text-[12px] leading-[19px] text-[#86828D]">
+        <p
+          id="coverage-note"
+          className="mt-6 text-[12px] leading-[19px] text-[#86828D]"
+        >
+          <span className="font-bold text-[#6A0DAD]">† India</span> is live but
+          we recommend a penny test before the first live payout; RTGS and NEFT
+          cut-off times are being confirmed.
+        </p>
+        <p className="mt-2 text-[12px] leading-[19px] text-[#86828D]">
           Cut-off times in GMT · T+0 same business day · BFI = Beneficiary
           Financial Institution · OFI = Originating Financial Institution ·
           Thresholds shown in the payout currency. Settlement times may vary
