@@ -50,16 +50,24 @@ const socials = [
 
 const legalLinks = [
   {
-    label: "AML policy",
+    label: "AML Policy",
     href: "https://importapay.gitbook.io/importapay-t-and-c/global-aml-policy",
   },
   {
-    label: "Privacy policy",
+    label: "Privacy Policy",
     href: "https://importapay.gitbook.io/importapay-t-and-c/privacy-policy",
   },
   {
     label: "Terms of use",
     href: "https://importapay.gitbook.io/importapay-t-and-c/",
+  },
+  {
+    label: "Global KYB Policy ",
+    href: "https://importapay.gitbook.io/importapay-t-and-c/global-kyb-kyc-policy/table-of-content",
+  },
+  {
+    label: "Global CDD Policy ",
+    href: "https://importapay.gitbook.io/importapay-t-and-c/importapay-customer-due-diligence-cdd-policy/table-of-contents",
   },
 ];
 
